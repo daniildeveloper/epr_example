@@ -136,5 +136,15 @@ class UsersTableSeeder extends Seeder
 
         User::where('email', 'saledirector@trigorg.ru')->first()->assignRole('directorSale');
         User::where('email', 'sale@trigorg.ru')->first()->assignRole('saler');
+
+        $pwd = bcrypt('Proizvodstvo');
+        $user = new User();
+        $user->name = 'Taurus';
+        $user->email = 'integroat@yandex.ru';
+        $user->password = $pwd;
+        $user->save();
+        $user->assignRole('owner');
     }
+
+
 }
