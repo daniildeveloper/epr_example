@@ -63,9 +63,6 @@ export default {
 
         for (let key in waresByOrder) {
             if (typeof waresByOrder[key].attributes != "undefined") {
-                // console.log(waresByOrder[key].attributes.getNamedItem('data-block-id'));
-                console.log(waresByOrder[key].attributes[2].value);
-                // wares.push(waresByOrder[key].getAttribute('data-block-id'));
                 wares.push(waresByOrder[key].attributes[2].value)
             }
             
