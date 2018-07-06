@@ -17,7 +17,7 @@ class CreateRestFrameworksTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->integer('price');
-            $table->integer('minimal_in_stock');
+            $table->integer('minimal_in_stock')->default(100);
             $table->timestamps();
         });
     }
