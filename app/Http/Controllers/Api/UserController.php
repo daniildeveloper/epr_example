@@ -13,6 +13,7 @@ use JWTAuth;
 use Log;
 use Mail;
 use Spatie\Permission\Models\Role;
+use Validator;
 
 class UserController extends Controller
 {
@@ -76,27 +77,6 @@ class UserController extends Controller
     }
 
     /**
-     * @param Request $request
-     */
-    public function setUserDetailsFromInviteLink(Request $request)
-    {
-        $link = Link::where('link', $request->link)->firstOrFail();
-
-        $password = Hash::make($request['password']);
-
-        $departament_id = 0;
-
-        $user           = new User();
-        $user->name     = $request->name;
-        $user->password = $password;
-        $user->email    = $link->email;
-        $user->save();
-
-        Link::where('link', $request->link)->delete();
-        return redirect('/');
-    }
-
-    /**
      * @api {GET} /api/user/roles GetRoles
      * @apiDescription Get user roles
      * @apiGroup User
@@ -140,6 +120,28 @@ class UserController extends Controller
         $userToInvite = $request->email;
         Log::info('User to invite ' . '\'' . $userToInvite . '\'');
         $invitorID = JWTAuth::toUser($request->header('Authorization'))->id;
+
+        // 'mail|unique:user__invite_links'
+        $rules = [
+            'email' => [
+                'email',
+                'required',
+                'unique:user_invite_links',
+            ],
+        ];
+
+        $messages = [
+            'unique:user_invite_links' => __('rules.user_invited'),
+        ];
+
+        $validate = Validator::make($request->all(), $rules, $messages);
+
+        if ($validate->fails()) {
+            return response()->json([
+                'status' => 'Valdation failed',
+                'errors' => $validate->errors()->all()
+            ]);
+        }
 
         $invitor = User::find($invitorID);
 

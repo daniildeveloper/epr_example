@@ -48,11 +48,15 @@ export default {
   },
 
   methods: {
-    async submit () {
+    submit () {
       this.$v.$touch()
-      const {data} = await this.form.post('/api/user-invite')
-      this.$emit('user-invite-completed');
-      this.clear()
+      this.form.post('/api/user-invite')
+        .then(data => {
+          console.log('user_invite_data', data)
+          this.$emit('user-invite-completed');
+          this.clear()
+        })
+      
     },
     clear () {
       this.$v.$reset();

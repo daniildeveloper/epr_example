@@ -23,6 +23,9 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::any('adminer', '\Miroc\LaravelAdminer\AdminerController@index');
 
+Route::get('/register/{link}', 'UserController@renderUserRegisterForm');
+Route::post('/registerme', 'UserController@setUserDetailsFromInviteLink')->name('register');
+
 Route::group(['prefix' => 'api'], function () {
 
     /**
