@@ -38,8 +38,8 @@ Route::group(['prefix' => 'api'], function () {
             Route::post('reset', 'Auth\ResetPasswordController@reset');
         });
 
-        Route::get('messages', 'ChatsController@fetchMessages');
-        Route::post('messages', 'ChatsController@sendMessage');
+        // Route::get('messages', 'ChatsController@fetchMessages');
+        // Route::post('messages', 'ChatsController@sendMessage');
 
         // all routes specific for users. Get only after auth
         Route::group(['middleware' => 'jwt'], function () {
@@ -48,9 +48,14 @@ Route::group(['prefix' => 'api'], function () {
             Route::resource('/departament-block', 'WorkersBlockController');
             Route::get('/departament-block/get-list/{year}/{month}', 'WorkersBlockController@indexByMonth');
             Route::post('/departament-block/check-status', 'WorkersBlockController@checkDate');
+            Route::get('roles', 'Api\UserController@getRoles')->middleware('role:owner');
         });
     });
     /**
      * END USER API GROUP
      */
+
+    Route::group(['middleware' => ['permission:invite_users']], function () {
+        Route::post('/user-invite', 'Api\UserControllerController@inviteusers');
+    });
 });

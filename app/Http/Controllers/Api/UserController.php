@@ -33,7 +33,7 @@ class UserController extends Controller
     {
         $userId = JWTAuth::toUser($request->header('Authorization'))->id;
 
-        $user = User::find($userId);
+        $user                   = User::find($userId);
         $user->permissionsArray = $user->getAllPermissions(); // get all permissions from roles and other granted
 
         // Log::info("Getting info about $user->name. Permissions count " . count($user->permissions));
@@ -95,6 +95,12 @@ class UserController extends Controller
         return redirect('/');
     }
 
+    /**
+     * @api {GET} /api/user/roles GetRoles
+     * @apiDescription Get user roles
+     * @apiGroup User
+     * @apiVersion 0.0.1
+     */
     public function getRoles(Request $request)
     {
         $roles = Role::all();
@@ -124,4 +130,52 @@ class UserController extends Controller
         return response()->json($user, 200);
     }
 
+    /**
+     * Приглашает пользователей, высылая им почту с ссылками
+     * @param Request $request
+     */
+    public function inviteUsers(Request $request)
+    {
+        $userToInvite = $request->email;
+        Log::info('User to invite ' . '\'' . $userToInvite . '\'');
+        $invitorID = JWTAuth::toUser($request->header('Authorization'))->id;
+
+        $invitor = User::find($invitorID);
+
+        $link                 = new Link();
+        $link->email          = $userToInvite;
+        $link->link           = $this->randomString(30);
+        $link->departament_id = 0;
+        $link->save();
+        // Mail::to($request->email)->queue(new UserInvite($link));
+        $data = [
+            'title'   => 'Доступ к Integro',
+            'link'    => $link,
+            'subject' => 'Приглашение с доступом',
+            'to'      => $userToInvite,
+        ];
+
+        Mail::send('mail.user_invite', $data, function ($message) use ($userToInvite) {
+            $message->from(env('MAIL_USERNAME'), 'Integro');
+            $message->sender(env('MAIL_USERNAME'), 'Integro');
+            $message->to();
+            $message->subject('Доступ к Integro');
+            $message->priority(3);
+        });
+    }
+
+    /**
+     * Generate random string
+     * @return mixed
+     */
+    private function randomString($length = 10)
+    {
+        $characters       = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString     = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
 }

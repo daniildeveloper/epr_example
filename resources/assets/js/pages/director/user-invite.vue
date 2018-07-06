@@ -59,7 +59,7 @@ export default {
       this.form.role = ''
     },
     getUserRoles() {
-      const url = '/api/owner/user/user-roles/list';
+      const url = '/api/user/roles';
       axios.get(url).then(response => {
         this.roles = response.data;
       })
