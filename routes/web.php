@@ -91,6 +91,11 @@ Route::group(['prefix' => 'api'], function () {
                 Route::post('/stickerDecline', 'Api\Stock\StickersAndPackagingsManipulationController@declineStickersSupply');
             });
         });
+
+        Route::group(['prefix' => 'order-change', 'middleware' => 'permission:change_wares_order'], function () {
+            Route::get('/', 'WareOrderController@index');
+            Route::post('/', 'WareOrderController@store');
+        });
     });
 
     Route::group(['middleware' => ['permission:invite_users']], function () {
