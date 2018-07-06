@@ -96,6 +96,42 @@ Route::group(['prefix' => 'api'], function () {
             Route::get('/', 'Api\Stock\WareOrderController@index');
             Route::post('/', 'Api\Stock\WareOrderController@store');
         });
+
+        Route::group(['prefix' => 'purse', 'middleware' => 'permission:finances'], function () {
+            Route::post('/store', 'Api\Finances\PurseController@store');
+            Route::get('/all', 'Api\Finances\PurseController@getAllPurses');
+            Route::post('take-down', 'Api\Finances\PurseController@purseTakeDown');
+            Route::post('take-up', 'Api\Finances\PurseController@purseTakeUp');
+            Route::post('take-profit', 'Api\Finances\PurseController@takeProfit');
+            Route::post('profit-calculator', 'Api\Finances\PurseController@updateProfitCalculator');
+            Route::get('profit-calculator/current', 'Api\Finances\PurseController@getProfitCalculatorCurrentState');
+
+            Route::group(['prefix' => 'request'], function () {
+                Route::get('unconfirmed', 'Api\Finances\MoneyTransactionsController@getAllNotConfirmedRequests');
+                Route::post('money-request', 'Api\Finances\MoneyTransactionsController@storeRequest');
+                Route::post('money-request-reponse/{id}', 'Api\Finances\MoneyTransactionsController@answerToRequest');
+            });
+
+            Route::group(['prefix' => 'accounting'], function () {
+                Route::post('/store', 'Api\Finances\PurseController@endAccountingPeriod');
+                Route::get('/history-data', 'Api\Finances\AccountingEditController@historyData');
+                Route::group(['middleware' => 'permission:show_stock_privats'], function () {
+                    Route::get('stock-accounting', 'Api\Finances\PurseController@getWorkersIncomes');
+                });
+
+                Route::get('salers-accounting', 'Api\Finances\PurseController@getSalersIncomes');
+
+                Route::group(['prefix' => 'finances'], function () {
+                    Route::get('unclosed-proposals', 'Api\Finances\FinanceAccountingController@getUnclosed');
+                });
+
+                // Route::group(['prefix' => 'warranty-cases'], function () {
+                //     Route::get('/actual', 'WarrantyProposalController@getAllUnclosedWarrantyProposalTransactions');
+                //     Route::post('/close-all', 'WarrantyProposalController@closeAllUnclosedWarrantyProposalTransactions');
+                //     Route::post('/close', 'WarrantyProposalController@closeUnclosedWarrantyProposalTrasnaction');
+                // });
+            });
+        });
     });
 
     Route::group(['middleware' => ['permission:invite_users']], function () {
