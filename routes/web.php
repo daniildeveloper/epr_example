@@ -93,8 +93,8 @@ Route::group(['prefix' => 'api'], function () {
         });
 
         Route::group(['prefix' => 'order-change', 'middleware' => 'permission:change_wares_order'], function () {
-            Route::get('/', 'WareOrderController@index');
-            Route::post('/', 'WareOrderController@store');
+            Route::get('/', 'Api\Stock\WareOrderController@index');
+            Route::post('/', 'Api\Stock\WareOrderController@store');
         });
     });
 

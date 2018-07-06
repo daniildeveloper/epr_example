@@ -144,6 +144,22 @@ class UsersTableSeeder extends Seeder
         $user->password = $pwd;
         $user->save();
         $user->assignRole('owner');
+
+        $permissions = [
+            ['name' => 'change_wares_order', 'description' => 'Менять порядок выдачи товаров'],
+            ['name' => 'watch_edit', 'description' => 'Управлять сменами рабочих цеха']
+        ];
+
+        foreach ($permissions as $p) {
+            $permission              = new Permission();
+            $permission->name        = $p['name'];
+            $permission->description = $p['description'];
+            $permission->save();
+        }
+
+        // Create Owner role
+        $owner = Role::where('name', 'owner')->first();
+        $owner->givePermissionTo('change_wares_order');
     }
 
 
