@@ -56,6 +56,6 @@ Route::group(['prefix' => 'api'], function () {
      */
 
     Route::group(['middleware' => ['permission:invite_users']], function () {
-        Route::post('/user-invite', 'Api\UserControllerController@inviteusers');
+        Route::post('/user-invite', 'Api\UserController@inviteusers');
     });
 });

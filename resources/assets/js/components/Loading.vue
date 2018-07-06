@@ -1,8 +1,8 @@
 <template>
-  <v-progress-linear 
-    v-model="percent"
-    height="2" 
-    v-show="show"
+  <v-progress-linear
+    :indeterminate="true"
+    :active="loading"
+    height="3"
     :color="canSuccess ? color : failedColor"
   >
   </v-progress-linear>
@@ -10,17 +10,21 @@
 
 <script>
 // Based on https://github.com/nuxt/nuxt.js/blob/master/lib/app/components/nuxt-loading.vue
-import Vue from 'vue'
+import Vue from 'vue';
+import {mapGetters} from 'vuex';
 
 export default {
   name: 'v-loading',
   data: () => ({
     percent: 0,
-    show: false,
+    show: true,
     canSuccess: true,
     duration: 3000,
     color: 'accent',
     failedColor: 'error'
+  }),
+  computed: mapGetters({
+    loading: 'loading'
   }),
 
   methods: {

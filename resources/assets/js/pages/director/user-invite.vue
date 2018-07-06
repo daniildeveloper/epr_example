@@ -52,11 +52,12 @@ export default {
       this.$v.$touch()
       const {data} = await this.form.post('/api/user-invite')
       this.$emit('user-invite-completed');
+      this.clear()
     },
     clear () {
-      this.$v.$reset()
-      this.form.email = ''
-      this.form.role = ''
+      this.$v.$reset();
+      this.form.email = '';
+      this.form.role = '';
     },
     getUserRoles() {
       const url = '/api/user/roles';

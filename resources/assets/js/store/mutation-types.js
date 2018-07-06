@@ -21,3 +21,6 @@ export const LAST_CREATED_OBJECT_NULL = 'LAST_CREATED_OBJECT_NULL'
 
 // offline/online status change
 export const NETWORK_STATUS_CHANGE = 'NETWORK_STATUS_CHANGE'
+
+// loading status change
+export const LOADING_STATUS_CHANGE = 'LOADING_STATUS_CHANGE'

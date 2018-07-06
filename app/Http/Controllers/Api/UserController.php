@@ -11,6 +11,7 @@ use Hash;
 use Illuminate\Http\Request;
 use JWTAuth;
 use Log;
+use Mail;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -142,10 +143,9 @@ class UserController extends Controller
 
         $invitor = User::find($invitorID);
 
-        $link                 = new Link();
-        $link->email          = $userToInvite;
-        $link->link           = $this->randomString(30);
-        $link->departament_id = 0;
+        $link        = new Link();
+        $link->email = $userToInvite;
+        $link->link  = $this->randomString(30);
         $link->save();
         // Mail::to($request->email)->queue(new UserInvite($link));
         $data = [
@@ -158,7 +158,7 @@ class UserController extends Controller
         Mail::send('mail.user_invite', $data, function ($message) use ($userToInvite) {
             $message->from(env('MAIL_USERNAME'), 'Integro');
             $message->sender(env('MAIL_USERNAME'), 'Integro');
-            $message->to();
+            $message->to($userToInvite);
             $message->subject('Доступ к Integro');
             $message->priority(3);
         });
