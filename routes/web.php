@@ -55,20 +55,20 @@ Route::group(['prefix' => 'api'], function () {
      */
 
     Route::group(['middleware' => 'jwt'], function () {
-        Route::group(['prefix' => 'stock', 'middleware' => 'permission:show_stock_info'], function () {
-            Route::resource('framework', 'Api\Stock\FrameworkController');
-            Route::resource('rframework', 'Api\Stock\RestFrameworkController');
-            Route::resource('packaging', 'Api\Stock\PackagingController');
-            Route::resource('sticker', 'Api\Stock\StickerController');
-            Route::resource('ware', 'Api\Stock\WareController');
-            Route::group(['prefix' => 'data'], function () {
-                Route::get('ware', 'Api\Stock\DataController@getWareData');
+        Route::group(['prefix' => '/stock', 'middleware' => 'permission:show_stock_info'], function () {
+            Route::resource('/framework', 'Api\Stock\FrameworkController');
+            Route::resource('/rframework', 'Api\Stock\RestFrameworkController');
+            Route::resource('/packaging', 'Api\Stock\PackagingController');
+            Route::resource('/sticker', 'Api\Stock\StickerController');
+            Route::resource('/ware', 'Api\Stock\WareController');
+            Route::group(['/prefix' => 'data'], function () {
+                Route::get('/ware', 'Api\Stock\DataController@getWareData');
             });
 
         });
-        Route::group(['prefix' => 'stock', 'middleware' => 'permission:hide_wares'], function () {
-            Route::get('wareshow/hide/{id}', 'Api\Stock\WareController@hideVisible');
-            Route::get('wareshow/show/{id}', 'Api\Stock\WareController@showVisible');
+        Route::group(['prefix' => '/stock', 'middleware' => 'permission:hide_wares'], function () {
+            Route::get('/wareshow/hide/{id}', 'Api\Stock\WareController@hideVisible');
+            Route::get('/wareshow/show/{id}', 'Api\Stock\WareController@showVisible');
         });
 
         Route::group(['prefix' => 'stock-data', 'middleware' => 'permission:show_stock_info'], function () {
@@ -78,6 +78,18 @@ Route::group(['prefix' => 'api'], function () {
             Route::get('/packagings', 'Api\Stock\NomenclatureCreationDataControlller@getPackagings');
             Route::get('/ware', 'Api\Stock\NomenclatureCreationDataControlller@getWares');
             Route::get('/stickers', 'Api\Stock\NomenclatureCreationDataControlller@getStickers');
+        });
+
+        Route::group(['prefix' => '/crud-nomenclatures', 'middleware' => 'permission:crud_nomenclatures'], function () {
+            Route::group(['prefix' => '/manipulations'], function () {
+                Route::post('store', 'Api\Stock\RestFrameworkmanipulationsController@store');
+                Route::get('/latest/{framework_id}', 'Api\Stock\RestFrameworkmanipulationsController@getLatest');
+                Route::get('/supplies-plan', 'Api\Stock\StickersAndPackagingsManipulationController@suppliesPlan');
+                Route::post('/packagingBy', 'Api\Stock\StickersAndPackagingsManipulationController@confirmPackagingsSupply');
+                Route::post('/packagingDecline', 'Api\Stock\StickersAndPackagingsManipulationController@declinePackagingsSupply');
+                Route::post('/stickerBy', 'Api\Stock\StickersAndPackagingsManipulationController@confirmStickersSupply');
+                Route::post('/stickerDecline', 'Api\Stock\StickersAndPackagingsManipulationController@declineStickersSupply');
+            });
         });
     });
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Stock;
+namespace App\Http\Controllers\Api\Stock;
 
 use App\Http\Controllers\Controller;
 use App\Models\MoneyTransactions;
