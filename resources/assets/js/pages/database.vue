@@ -25,13 +25,6 @@
         </v-tabs-item>
 
         <v-tabs-item
-          v-if="hasPermission('show_stock_privats')"
-          :href="'#frameworks'"
-        >
-          Инвентарные основы
-        </v-tabs-item>
-
-        <v-tabs-item
           :href="'#rframeworks'"
           v-if="hasPermission('show_stock_info')"
         >
@@ -90,17 +83,6 @@
         </v-card>
       </v-tabs-content>
     <!-- packagings -->
-
-    <!-- frameworks -->
-      <v-tabs-content
-        :id="'frameworks'"
-        v-if="hasPermission('show_stock_privats')"
-      >
-        <v-card flat>
-          <frameworks-view></frameworks-view>
-        </v-card>
-      </v-tabs-content>
-    <!-- end framewirks -->
 
     <!-- rest frameworks -->
       <v-tabs-content
