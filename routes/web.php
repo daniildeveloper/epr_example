@@ -138,3 +138,15 @@ Route::group(['prefix' => 'api'], function () {
         Route::post('/user-invite', 'Api\UserController@inviteusers');
     });
 });
+
+Route::get('password/reset/{token}', function () {
+    return view('index');
+})->name('password.reset');
+
+Route::any('/{component}/{component1}', function () {
+    return view('index');
+});
+
+Route::any('/{component}', function () {
+    return view('index');
+});

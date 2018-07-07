@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Finances;
 
 use App\Models\MoneyRequest;
-use App\Models\MoneyTransactions;
+use App\Models\MoneyTransaction;
 use App\Models\Purse;
 use Illuminate\Http\Request;
 use JWTAuth;
@@ -15,7 +15,7 @@ class MoneyTransactionsController extends Controller
      * @param Request $request
      */
     public function getAllMoneyTransactions(Request $request) {
-        $transactions = MoneyTransactions::paginate(15);
+        $transactions = MoneyTransaction::paginate(15);
 
         foreach ($transactions as $t) {
             $t->purseFrom = $t->purseFrom;

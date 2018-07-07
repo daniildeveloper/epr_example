@@ -6,11 +6,11 @@ use App\Models\AccountingDataHistory;
 use App\Models\AccountingPeriodEnd;
 use App\Models\AccountingPeriodEndPurseDetail;
 use App\Models\FoundPurse;
-use App\Models\MoneyTransactions;
+use App\Models\MoneyTransaction;
 use App\Models\ProfitCoordinator;
 use App\Models\Proposal;
 use App\Models\Purse;
-use App\Models\PursesCategory;
+use App\Models\PurseCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -69,7 +69,7 @@ class PurseController extends Controller
      */
     public function getAllPurses(Request $request)
     {
-        $pcs = PursesCategory::all();
+        $pcs = PurseCategory::all();
 
         foreach ($pcs as $p) {
             $p->purses = $p->purses;
@@ -145,11 +145,11 @@ class PurseController extends Controller
             Log::info('Latest period id ' . $latestPeriod->id);
         }
 
-        $tos = MoneyTransactions::where(function ($query) use ($purseID, $latest) {
+        $tos = MoneyTransaction::where(function ($query) use ($purseID, $latest) {
             $query->where('purse_to_id', $purseID)
                 ->where('created_at', '>', $latest->created_at);
         })->get();
-        $froms = MoneyTransactions::where(function ($query) use ($purseID, $latest) {
+        $froms = MoneyTransaction::where(function ($query) use ($purseID, $latest) {
             $query->where('purse_from_id', $purseID)
                 ->where('created_at', '>', $latest->created_at);
         })->get();
@@ -194,7 +194,7 @@ class PurseController extends Controller
             return response()->json(['message' => 'Недостаточно средств'], 402);
         }
 
-        $transaction                = new MoneyTransactions();
+        $transaction                = new MoneyTransaction();
         $transaction->purse_from_id = $purse_id;
         $transaction->sum           = $sum;
         $transaction->argument      = 'Снятия с кошелька';
@@ -225,7 +225,7 @@ class PurseController extends Controller
         $purse_id = $request->purse_id;
         $sum      = $request->sum;
 
-        $transaction              = new MoneyTransactions();
+        $transaction              = new MoneyTransaction();
         $transaction->purse_to_id = $purse_id;
         $transaction->sum         = $sum;
         $transaction->argument    = 'Пополнение кошелька';
@@ -289,7 +289,7 @@ class PurseController extends Controller
         $unclosedProposalsIDsArray = array_values($request->proposals_to_close); // array for query builder of ids only
 
         // get all workers incomes
-        $workerIncomesMoneyTransactions = MoneyTransactions::where(function ($query) use ($workersPurseID, $unclosedProposalsIDsArray) {
+        $workerIncomesMoneyTransactions = MoneyTransaction::where(function ($query) use ($workersPurseID, $unclosedProposalsIDsArray) {
             $query->where('purse_to_id', $workersPurseID)
                 ->whereIn('proposal_id', $unclosedProposalsIDsArray);
         })->get();
@@ -301,7 +301,7 @@ class PurseController extends Controller
         }
 
         // get all salers incomes
-        $salersIncomesMoneyTransactions = MoneyTransactions::where(function ($query) use ($salersPurseID, $unclosedProposalsIDsArray) {
+        $salersIncomesMoneyTransactions = MoneyTransaction::where(function ($query) use ($salersPurseID, $unclosedProposalsIDsArray) {
             $query->where('purse_to_id', $salersPurseID)
                 ->whereIn('proposal_id', $unclosedProposalsIDsArray);
         })->get();
@@ -314,12 +314,12 @@ class PurseController extends Controller
         // 5. Вычитаем все транзакции с кошелька и на кошелек с коненой прибыли
         $latestPeriod                 = AccountingPeriodEnd::orderBy('id', 'desc')->first();
         $latestPeriodCreatedAt        = $latestPeriod->created_at;
-        $workersPurseTransactionsFrom = MoneyTransactions::where(function ($query) use ($latestPeriodCreatedAt, $workersPurseID) {
+        $workersPurseTransactionsFrom = MoneyTransaction::where(function ($query) use ($latestPeriodCreatedAt, $workersPurseID) {
             $query->where('purse_from_id', $workersPurseID)
                 ->where('created_at', '>', $latestPeriodCreatedAt);
         });
 
-        $salersPurseTransactionsFrom = MoneyTransactions::where(function ($query) use ($latestPeriodCreatedAt, $salersPurseID) {
+        $salersPurseTransactionsFrom = MoneyTransaction::where(function ($query) use ($latestPeriodCreatedAt, $salersPurseID) {
             $query->where('purse_from_id', $salersPurseID)
                 ->where('created_at', '>', $latestPeriodCreatedAt);
         });
@@ -333,7 +333,7 @@ class PurseController extends Controller
         }
 
         // 6. Перевод денег с системных на персонализированные кошельки
-        $workersProfitTransaction                = new MoneyTransactions();
+        $workersProfitTransaction                = new MoneyTransaction();
         $workersProfitTransaction->purse_from_id = $workersPurseID;
         $workersProfitTransaction->purse_to_id   = Purse::where('slug', 'workers_purse')->first()->id;
         $workersProfitTransaction->argument      = "Снятие прибыли цеха";
@@ -343,7 +343,7 @@ class PurseController extends Controller
         // write accounting history workers incomes
         $accountingHistory['workers_incomes'] = $workersTotalIncomes;
 
-        $salersProfitTransaction                = new MoneyTransactions();
+        $salersProfitTransaction                = new MoneyTransaction();
         $salersProfitTransaction->purse_from_id = $salersPurseID;
         $salersProfitTransaction->argument      = 'Снятие прибыли офиса';
         $salersProfitTransaction->sum           = $salersTotalIncomes;
@@ -366,7 +366,7 @@ class PurseController extends Controller
             }
         }
 
-        $accountingMainTransaction                = new MoneyTransactions();
+        $accountingMainTransaction                = new MoneyTransaction();
         $accountingMainTransaction->purse_from_id = Purse::where('slug', 'salers_money')->first()->id;
         $accountingMainTransaction->argument      = 'Обнуление кассы';
         $accountingMainTransaction->sum           = $proposalsTotal;
@@ -418,7 +418,7 @@ class PurseController extends Controller
     {
         $workersPurse = Purse::where('slug', 'workers_profit_purse')->first();
 
-        $incomes = MoneyTransactions::where('argument', 'Снятие прибыли цеха')->orderBy('id', 'desc')->paginate(12);
+        $incomes = MoneyTransaction::where('argument', 'Снятие прибыли цеха')->orderBy('id', 'desc')->paginate(12);
 
         return response()->json($incomes, 200);
     }
@@ -430,7 +430,7 @@ class PurseController extends Controller
     {
         // $workersPurse = Purse::where('slug', 'salers')->first();
 
-        $incomes = MoneyTransactions::where('argument', 'Снятие прибыли офиса')->orderBy('id', 'desc')->paginate(12);
+        $incomes = MoneyTransaction::where('argument', 'Снятие прибыли офиса')->orderBy('id', 'desc')->paginate(12);
 
         return response()->json($incomes, 200);
     }
@@ -447,7 +447,7 @@ class PurseController extends Controller
 
         $rest = $this->pursesRestsCalculate($purse->id);
 
-        $transaction                = new MoneyTransactions();
+        $transaction                = new MoneyTransaction();
         $transaction->purse_from_id = $purse->id;
         $transaction->purse_to_id   = Purse::where('slug', 'workers_purse')->first()->id;
         $transaction->sum           = $rest;
@@ -488,7 +488,7 @@ class PurseController extends Controller
             return response()->json(['message' => 'Недостаточно средств'], 401);
         }
 
-        $transaction                = new MoneyTransactions();
+        $transaction                = new MoneyTransaction();
         $transaction->purse_from_id = $purse_id;
         $transaction->purse_to_id   = $purseToId;
         $transaction->sum           = $sum;
