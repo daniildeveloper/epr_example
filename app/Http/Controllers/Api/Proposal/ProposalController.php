@@ -979,6 +979,7 @@ class ProposalController extends Controller
 
             $proposalWareSelfCost += $packagingCost + $stickerCost + $chemieCost;
             $proposalWaresPrice += $proposal_ware->price_per_count * $proposal_ware->count;
+            $waresSelfCost += $proposalWareSelfCost;
 
             if ($proposal_ware->color != null) {
                 // total color incomes
