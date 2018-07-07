@@ -408,9 +408,11 @@ export default {
         is_with_docs: this.is_with_docs,
       }
       axios.post('/api/proposal/proposal', postObject).then(response => {
-        this.loading = false
         if (response.data.status === 'validator_errors') {
-          this.creating = false;
+          this.creating = false
+          this.$store.dispatch('setLoading', {
+            loading: false
+          });
           this.validationErr = response.data.errors;
           this.$store.dispatch('responseMessage', {
             type: 'error',

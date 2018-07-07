@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\Proposal;
 
 use Action;
 use ActionType;
+use App\Http\Controllers\Controller;
 use App\Models\DeclinedRests;
 use App\Models\FoundPurse;
 use App\Models\MoneyTransaction;
@@ -1013,6 +1014,7 @@ class ProposalController extends Controller
 
             // calculate profit
             $profitTotal = $proposalWaresPrice - $waresSelfCost - $partnerAmount;
+            Log::info('Profit from ' . $proposal->code . ' ' . $profitTotal);
             $this->profitCoordinate($profitTotal, $proposal->id, $proposal->tax_type);
         }
     }

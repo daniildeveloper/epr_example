@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateStickerManipulationsTable extends Migration
+class CreateWareDataChangesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,13 @@ class CreateStickerManipulationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('sticker_manipulations', function (Blueprint $table) {
+        Schema::create('ware_data_changes', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('sticker_id');
-            $table->integer('count');
-            $table->boolean('refill')->default(true);
-            $table->integer('proposal_id')->nullable();
+            $table->integer('ware_id');
+            $table->integer('total_saled');
+            $table->integer('total_incomes');
+            $table->integer('price');
+            $table->boolean('closed')->default(false);
             $table->timestamps();
         });
     }
@@ -30,6 +31,6 @@ class CreateStickerManipulationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sticker_manipulations');
+        Schema::dropIfExists('ware_data_changes');
     }
 }
