@@ -17,16 +17,19 @@ Route::get('/', function () {
 
 Route::get('test', 'TestController@test');
 
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
-
 Route::any('adminer', '\Miroc\LaravelAdminer\AdminerController@index');
 
 Route::get('/register/{link}', 'UserController@renderUserRegisterForm');
 Route::post('/registerme', 'UserController@setUserDetailsFromInviteLink')->name('register');
 
 Route::group(['prefix' => 'api'], function () {
+    // Open apii. EveryOne access
+    Route::group(['prefix' => 'open'], function () {
+        Route::group(['prefix' => 'stock'], function () {
+            Route::get('/ware-rests/all', 'Api\Open\StockController@allWareRests');
+            Route::get('/ware-rests/single/{ware_id}', 'Api\Open\StockController@singleWareRest');
+        });
+    });
     /**
      * USER API GROUP
      */
