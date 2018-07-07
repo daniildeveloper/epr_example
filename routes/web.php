@@ -159,6 +159,13 @@ Route::group(['prefix' => 'api'], function () {
             Route::get('/data', 'Api\ActionsController@index');
             Route::get('transactions', 'Api\ActionsController@getMoneyTrasnactions');
         });
+
+        Route::group(['prefix' => 'reports', 'middleware' => 'permission:finances'], function () {
+            Route::get('/finances', 'Api\ReportsController@getMoneyTransactions');
+            Route::get('/wares', 'Api\ReportsController@getWares');
+            Route::get('proposal-wares', 'Api\ReportsController@getChemieReport');
+            Route::get('sales', 'Api\ReportsController@getSalesData');
+        });
     });
 
     Route::group(['middleware' => ['permission:invite_users']], function () {

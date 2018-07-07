@@ -114,11 +114,15 @@ export default {
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
     },
     submit() {
+      this.$store.dispatch('setLoading', {
+        loading: true,
+      })
       const url = '/api/reports/finances?period_begin=' + this.dateBegin + '&period_end=' + this.dateEnd;
       axios({
         url: url,
         method: "GET",
-      }).then(response => {
+      })
+      .then(response => {
         console.log(response)
         this.$emit('new-report-created')
         const url = window.URL.createObjectURL(new Blob([response.data.file]));
@@ -127,9 +131,20 @@ export default {
         link.setAttribute('download', response.data.name + '.csv');
         document.body.appendChild(link);
         link.click();
-      });
+        this.$store.dispatch('setLoading', {
+          loading: false,
+        })
+      })
+      .catch(err => {
+        this.$store.dispatch('setLoading', {
+          loading: false,
+        })
+      })
     },
     submitWaresReport() {
+      this.$store.dispatch('setLoading', {
+          loading: true,
+        })
       const url = '/api/reports/wares?period_begin=' + this.dateBegin + '&period_end=' + this.dateEnd;
       axios({
         url: url,
@@ -143,6 +158,10 @@ export default {
         link.setAttribute('download', response.data.name + '.csv');
         document.body.appendChild(link);
         link.click();
+      }).catch(err => {
+        this.$store.dispatch('setLoading', {
+          loading: false,
+        })
       });
     },
 
@@ -151,6 +170,9 @@ export default {
      * @return {[type]} [description]
      */
     submitChemieReport() {
+      this.$store.dispatch('setLoading', {
+          loading: true,
+        })
       const url = '/api/reports/proposal-wares?period_begin=' + this.dateBegin + '&period_end=' + this.dateEnd;
       axios({
         url: url,
@@ -164,6 +186,13 @@ export default {
         link.setAttribute('download', response.data.name + '.csv');
         document.body.appendChild(link);
         link.click();
+        this.$store.dispatch('setLoading', {
+          loading: false,
+        });
+      }).catch(err => {
+        this.$store.dispatch('setLoading', {
+          loading: false,
+        })
       });
     },
     submitProfitReport() {},
