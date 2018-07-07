@@ -3,7 +3,6 @@
     lazy-validation
     v-model="valid" 
     refs="new_proposal_form">
-    <v-progress-circular v-if="loading" :indeterminate="loading" color="primary" :style="{position: 'absolute', top: '20px', left: '40%' }"></v-progress-circular>
     <v-container grid-list-md>
       <v-layout row wrap>
         <!-- Выбор товара -->
@@ -369,7 +368,6 @@ export default {
   },
   methods: {
     submit () {
-      this.loading = true
       this.creating = true
       let wares = [];
       let addS = []; // additional servies to push
