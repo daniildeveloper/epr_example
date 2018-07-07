@@ -108,10 +108,10 @@ class PurseController extends Controller
         }
 
         if ($purse->category_id === 3) {
-            $tos = MoneyTransactions::where(function ($query) use ($purseID) {
+            $tos = MoneyTransaction::where(function ($query) use ($purseID) {
                 $query->where('purse_to_id', $purseID);
             })->get();
-            $froms = MoneyTransactions::where(function ($query) use ($purseID) {
+            $froms = MoneyTransaction::where(function ($query) use ($purseID) {
                 $query->where('purse_from_id', $purseID);
             })->get();
 
