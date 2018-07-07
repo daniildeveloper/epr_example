@@ -368,6 +368,9 @@ export default {
   },
   methods: {
     submit () {
+      this.$store.dispatch('setLoading', {
+        loading: true
+      });
       this.creating = true
       let wares = [];
       let addS = []; // additional servies to push
@@ -423,10 +426,16 @@ export default {
           // })
           this.clear()
           this.validationErr = {}; // null validation errors
+          this.$store.dispatch('setLoading', {
+            loading: false
+          });
         }
       })
       .catch(error => {
         this.creating = false
+        this.$store.dispatch('setLoading', {
+          loading: false
+        });
       })
     },
     getData () {
@@ -614,10 +623,6 @@ export default {
       !this.$v.select.required && errors.push('Поле не должно оставаться пустым')
       return errors
     },
-    ...mapGetters({
-      lastCreatedClient: 'lastCreatedClient',
-      lastCreatedObject: 'lastCreatedObject',
-    }),
   },
   mounted() {
     this.getData()

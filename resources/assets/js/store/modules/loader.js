@@ -6,7 +6,7 @@ export const state = {
 
 export const mutations = {
     [types.LOADING_STATUS_CHANGE] (state, loading) {
-        state.loading = loading
+        state.loading = loading.loading
     }
 };
 

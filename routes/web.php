@@ -132,6 +132,25 @@ Route::group(['prefix' => 'api'], function () {
                 // });
             });
         });
+
+        Route::group(['prefix' => 'proposal'], function () {
+            Route::group(['prefix' => 'data'], function () {
+                Route::get('creation', 'Api\Proposal\DataController@getProposalCreationData');
+                Route::get('client/search{query?}', 'Api\Proposal\DataController@searchClients');
+                Route::get('object/search{query?}{client_id?}', 'Proposal\DataController@searchObjects');
+                Route::get('/stages', 'Api\Proposal\DataController@getStatusesList');
+                Route::get('tax', 'Api\Proposal\DataController@getTaxData');
+            });
+            Route::group(['prefix' => 'proposal'], function () {
+                Route::resource('/', 'Api\Proposal\ProposalController');
+                Route::post('notes-update/{id}', 'Api\Proposal\ProposalController@changeProposalComment');
+                Route::get('/paginate', 'Api\Proposal\ProposalController@proposalPaginate');
+                Route::post('/change-status', 'Api\Proposal\ProposalController@changeProposalStatus'); // this route has very many permissions check, stored to the controller
+                Route::post('/change-deadline', 'Api\Proposal\ProposalController@changeProposalDeadline');
+                Route::resource('argument', 'Api\Proposal\Proposal\NotAllowedArgumentController');
+                Route::get('/argument/find/{proposal_id}', 'Api\Proposal\Proposal\NotAllowedArgumentController@find');
+            });
+        });
     });
 
     Route::group(['middleware' => ['permission:invite_users']], function () {
