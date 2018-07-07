@@ -999,7 +999,7 @@ class ProposalController extends Controller
             // define tax
             $tax = 0;
 
-            if ($proposal->is_with_docs === true) {
+            if ($proposal->is_with_docs === 1) {
                 $tax = $this->proposalTaxManipulate($proposal->tax, $proposalWaresPrice, $proposal->id, $proposal->code);
             }
 

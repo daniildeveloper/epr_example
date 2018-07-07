@@ -154,6 +154,11 @@ Route::group(['prefix' => 'api'], function () {
                 Route::get('/argument/find/{proposal_id}', 'Api\Proposal\Proposal\NotAllowedArgumentController@find');
             });
         });
+
+        Route::group(['prefix' => 'action', 'middleware' => 'permission:actions_archive'], function () {
+            Route::get('/data', 'Api\ActionsController@index');
+            Route::get('transactions', 'Api\ActionsController@getMoneyTrasnactions');
+        });
     });
 
     Route::group(['middleware' => ['permission:invite_users']], function () {
