@@ -8,7 +8,7 @@
       </v-list-tile-content>
     </v-list-tile>
     <v-list-tile>
-      <v-btn>Закрыть и перевести деньги на счет цеха</v-btn>
+      <v-btn @click="closeFund()">Закрыть и перевести деньги на счет цеха</v-btn>
     </v-list-tile>
   </v-list>
 </template>
