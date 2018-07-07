@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Models\AccountingPeriodEnd;
 use App\Models\AccountingPeriodEndPurseDetail;
-use App\Models\MoneyTransactions;
+use App\Models\MoneyTransaction;
 use App\Models\Purse;
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,11 +37,11 @@ class Purse extends Model
             $query->where('accounting_id', $latestPeriod->id)
                 ->where('purse_id', $purseID);
         })->first();
-        $tos = MoneyTransactions::where(function ($query) use ($purseID, $latest) {
+        $tos = MoneyTransaction::where(function ($query) use ($purseID, $latest) {
             $query->where('purse_to_id', $purseID)
                 ->where('created_at', '>', $latest->created_at);
         })->get();
-        $froms = MoneyTransactions::where(function ($query) use ($purseID, $latest) {
+        $froms = MoneyTransaction::where(function ($query) use ($purseID, $latest) {
             $query->where('purse_from_id', $purseID)
                 ->where('created_at', '>', $latest->created_at);
         })->get();

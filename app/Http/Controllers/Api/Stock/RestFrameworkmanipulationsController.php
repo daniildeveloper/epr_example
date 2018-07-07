@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Stock;
 use App\Http\Controllers\Controller;
 use App\Models\RestFrameworkManipulation;
 use Illuminate\Http\Request;
-use App\Models\MoneyTransactions;
+use App\Models\MoneyTransaction;
 use App\Models\Purse;
 use App\Models\RestFramework;
 use Log;
@@ -45,7 +45,7 @@ class RestFrameworkmanipulationsController extends Controller
             return response()->json(['message' => 'Недостаточно средств для покупки'], 402);
           }
 
-          $transaction = new MoneyTransactions();
+          $transaction = new MoneyTransaction();
           $transaction->purse_from_id = $purseFromID;
           $transaction->sum = $sum;
           $transaction->argument = "Перевод денег на покупку химии $framework->name";
@@ -58,7 +58,7 @@ class RestFrameworkmanipulationsController extends Controller
           Log::info('Сумма для перевода химии в деньги ' . $sum);
           $purseToID = Purse::where('slug', 'chemie_purse')->first()->id;
 
-          $transaction = new MoneyTransactions();
+          $transaction = new MoneyTransaction();
           $transaction->purse_to_id = $purseToID;
           $transaction->sum = $sum;
           $transaction->argument = "Перевод химии в деньги $framework->name в $sum";
