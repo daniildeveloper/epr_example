@@ -23,13 +23,6 @@ Route::get('/register/{link}', 'UserController@renderUserRegisterForm');
 Route::post('/registerme', 'UserController@setUserDetailsFromInviteLink')->name('register');
 
 Route::group(['prefix' => 'api'], function () {
-    // Open apii. EveryOne access
-    Route::group(['prefix' => 'open'], function () {
-        Route::group(['prefix' => 'stock'], function () {
-            Route::get('/ware-rests/all', 'Api\Open\StockController@allWareRests');
-            Route::get('/ware-rests/single/{ware_id}', 'Api\Open\StockController@singleWareRest');
-        });
-    });
     /**
      * USER API GROUP
      */
@@ -59,7 +52,13 @@ Route::group(['prefix' => 'api'], function () {
 
     Route::group(['middleware' => 'jwt'], function () {
         Route::post('search', 'Api\GlobalSearchController@search'); // to global search we have everyone an access
-
+        // Open apii. EveryOne access
+        Route::group(['prefix' => 'open'], function () {
+            Route::group(['prefix' => 'stock'], function () {
+                Route::get('/ware-rests/all', 'Api\Open\StockController@allWareRests');
+                Route::get('/ware-rests/single/{ware_id}', 'Api\Open\StockController@singleWareRest');
+            });
+        });
         Route::group(['prefix' => '/stock', 'middleware' => 'permission:show_stock_info'], function () {
             Route::resource('/framework', 'Api\Stock\FrameworkController');
             Route::resource('/rframework', 'Api\Stock\RestFrameworkController');
