@@ -58,6 +58,8 @@ Route::group(['prefix' => 'api'], function () {
      */
 
     Route::group(['middleware' => 'jwt'], function () {
+        Route::post('search', 'Api\GlobalSearchController@search'); // to global search we have everyone an access
+
         Route::group(['prefix' => '/stock', 'middleware' => 'permission:show_stock_info'], function () {
             Route::resource('/framework', 'Api\Stock\FrameworkController');
             Route::resource('/rframework', 'Api\Stock\RestFrameworkController');
