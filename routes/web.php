@@ -166,6 +166,24 @@ Route::group(['prefix' => 'api'], function () {
             Route::get('proposal-wares', 'Api\ReportsController@getChemieReport');
             Route::get('sales', 'Api\ReportsController@getSalesData');
         });
+
+        // ['middleware' => ['role:owner'],
+        Route::group(['prefix' => 'owner', 'middleware' => 'role:owner'], function () {
+            Route::group(['prefix' => 'user'], function () {
+                Route::get('data', 'Api\Owner\OwnerControlller@getUsersData');
+                Route::get('permissions', 'Api\Owner\OwnerControlller@getPermissions');
+                Route::get('user-roles/list', 'Api\Owner\UserController@getRoles');
+                Route::post('grant-permission', 'Api\Owner\OwnerControlller@grantPermission');
+                Route::post('revoke-access', 'Api\Owner\OwnerControlller@revokeAccess');
+                Route::post('change-password', 'Api\Owner\OwnerControlller@setuserPassword');
+            });
+
+            // taxes
+            Route::group(['prefix' => 'taxes'], function () {
+                Route::get('/', 'Api\Owner\TaxesController@index');
+                Route::put('/update/{id}', 'Api\Owner\TaxesController@update');
+            });
+        });
     });
 
     Route::group(['middleware' => ['permission:invite_users']], function () {

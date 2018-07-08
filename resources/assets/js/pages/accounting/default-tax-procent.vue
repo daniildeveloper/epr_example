@@ -81,6 +81,9 @@ export default {
      * @return {int}    int
      */
     updateTax(id, tax) {
+      this.$store.dispatch('setLoading', {
+          loading: true,
+        })
       axios.put('/api/owner/taxes/update/' + id, {
         tax: tax
       }).then(response => {
@@ -91,6 +94,14 @@ export default {
           type: 'success',
           text: 'Налоговая ставка изменена',
           modal: false
+        });
+
+        this.$store.dispatch('setLoading', {
+          loading: false,
+        });
+      }).catch(err => {
+        this.$store.dispatch('setLoading', {
+          loading: false,
         })
       })
     }
