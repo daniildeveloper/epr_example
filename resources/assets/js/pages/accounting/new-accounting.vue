@@ -148,10 +148,21 @@ export default {
     submit() {
       const url = '/api/purse/accounting/store';
       // const proposalsToClose = [];
+      // 
+      this.$store.dispatch('setLoading', {
+          loading: true,
+        })
 
       axios.post(url, {}).then(response => {
         this.newAccountingDialog = false;
         this.$emit('new-accountng-created');
+        this.$store.dispatch('setLoading', {
+          loading: false,
+        })
+      }).catch(err => {
+        this.$store.dispatch('setLoading', {
+          loading: false,
+        })
       })
     },
 
@@ -171,13 +182,15 @@ export default {
     close() {
       let selectedproposals = [];
 
+      this.$store.dispatch('setLoading', {
+          loading: true,
+        })
+
       this.proposals.forEach(proposal => {
         if (proposal.selected === true) {
           selectedproposals.push(proposal.id)
         }
       })
-
-      console.log(selectedproposals)
 
       axios.post('/api/purse/accounting/store', {
         proposals_to_close: selectedproposals,

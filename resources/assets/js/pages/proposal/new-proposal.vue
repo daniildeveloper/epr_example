@@ -241,7 +241,6 @@ import axios from 'axios'
 import { Form } from 'vform';
 import {mapGetters} from 'vuex'
 import ProposalWare from '~/pages/proposal/proposal-ware'
-import AdditionalService from '~/pages/proposal/proposal-additional-service'
 
 /**
  * В модальном окошке открывается сей компонент.
@@ -287,7 +286,6 @@ export default {
 
   components: {
     'proposal-ware-view': ProposalWare,
-    'additional-service-view': AdditionalService,
   },
 
   data () {

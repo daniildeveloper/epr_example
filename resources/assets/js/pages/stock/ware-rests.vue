@@ -1,5 +1,6 @@
 <template>
   <v-data-table
+      no-data-text="Нет данных"
       v-bind:headers="headers"
       :items="items"
       class="elevation-1"

@@ -11,6 +11,7 @@
       ></v-text-field> -->
     </v-card-title>
     <v-data-table
+        no-data-text="Нет данных"
         v-bind:headers="headers"
         v-bind:items="items"
         v-bind:search="search"

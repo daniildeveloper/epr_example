@@ -7,6 +7,7 @@
       <h5>Заявки</h5>
       <v-flex>
         <v-data-table
+          no-data-text="Нет данных"
           :headers="headersProposals"
           :items="proposals"
           hide-actions

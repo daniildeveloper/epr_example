@@ -220,13 +220,11 @@ import { Form } from 'vform';
 import RestFramework from '~/pages/stock/rest-framework';
 import Ware from '~/pages/stock/ware';
 import UserInvite from '~/pages/director/user-invite';
-import NewSupply from '~/pages/stock/create/supply';
 import NewProposal from '~/pages/proposal/new-proposal';
 import SingleProposal from '~/pages/proposal/single';
 import ProposalBoard from '~/pages/proposal/board'
 import WorkersCalendar from '~/pages/workers/calendar'
 import WareRests from '~/pages/stock/ware-rests'
-import SuppliesPlan from '~/pages/stock/supply-plan-list'
 
 /**
  * Компонент для главной страницы с отображением необходимых данных
@@ -238,12 +236,10 @@ export default {
     'rest-framework-view': RestFramework,
     'ware-view': Ware,
     'user-invite-view': UserInvite,
-    'new-supply-view': NewSupply,
     'new-proposal-view': NewProposal,
     'proposal-board-view': ProposalBoard,
     'workers-calendar-view': WorkersCalendar,
     'ware-rests-view': WareRests,
-    'supply-plan-list-view': SuppliesPlan,
 
   },
 

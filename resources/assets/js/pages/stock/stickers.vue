@@ -28,6 +28,7 @@
 
       <v-flex>
         <v-data-table
+          no-data-text="Нет данных"
           :headers="headers"
           :items="items"
           hide-actions
