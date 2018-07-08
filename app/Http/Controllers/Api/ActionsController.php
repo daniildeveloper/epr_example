@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Action;
+use App\Models\Action;
 use App\Models\MoneyTransaction;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
