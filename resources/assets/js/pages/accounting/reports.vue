@@ -23,7 +23,7 @@
           prepend-icon="event"
           @blur="dateBegin = parseDate(dateFormattedBegin)"
         ></v-text-field>
-        <v-date-picker v-model="dateBegin" @input="dateFormattedBegin = formatDate($event)" no-title scrollable actions>
+        <v-date-picker v-model="dateBegin" locale="ru" @input="dateFormattedBegin = formatDate($event)" no-title scrollable actions>
           <template slot-scope="{ save, cancel }">
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -56,7 +56,7 @@
           prepend-icon="event"
           @blur="dateEnd = parseDate(dateFormattedEnd)"
         ></v-text-field>
-        <v-date-picker v-model="dateEnd" @input="dateFormattedEnd = formatDate($event)" no-title scrollable actions>
+        <v-date-picker locale="ru" v-model="dateEnd" @input="dateFormattedEnd = formatDate($event)" no-title scrollable actions>
           <template slot-scope="{ save, cancel }">
             <v-card-actions>
               <v-spacer></v-spacer>

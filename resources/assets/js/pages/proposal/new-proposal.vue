@@ -107,6 +107,7 @@
                   @input="client_deadline_formatted = formatDate($event)" 
                   no-title 
                   scrollable 
+                  locale="ru"
                   actions>
                   <template slot-scope="{ save, cancel }">
                     <v-card-actions>
@@ -130,6 +131,7 @@
                 :nudge-right="40"
                 max-width="290px"
                 min-width="290px"
+                locale="ru"
               >
                 <v-text-field
                   slot="activator"
