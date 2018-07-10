@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Action;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class ImportCommandSetup extends Command
 {
@@ -11,7 +13,8 @@ class ImportCommandSetup extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'integro:import';
+    // protected $signature = 'integro:import';
 
     /**
      * The console command description.
@@ -20,6 +23,15 @@ class ImportCommandSetup extends Command
      */
     protected $description = 'Importer for integro from excel';
 
+    /**
+     * Columns
+     * @var array
+     */
+    protected $columns = [];
+
+    protected $files = [
+        './storage/app/public/2.csv'
+    ];
     /**
      * Create a new command instance.
      *
@@ -38,9 +50,14 @@ class ImportCommandSetup extends Command
     public function handle()
     {
         // 1. Распознование колонок
+        $this->line('Show columns...');
+        $this->line('Reading file ' . $this->file);
+
         // 2. Вызов сущности модели
         // 3. Генерация поставок
         // 4. калькуляция остатков
         // 6. Ввод товаров
     }
+
+    private function columns_setup() {}
 }
