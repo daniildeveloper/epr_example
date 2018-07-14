@@ -128,6 +128,7 @@
 
 
       <v-btn class="hidden-sm-and-down" v-if="hasPermission('finances')" flat :to="{name:'finances'}" >Финансы</v-btn>
+      <v-btn class="hidden-sm-and-down" v-if="hasPermission('manufactory')" flat :to="{name:'manufactory'}" >Цех</v-btn>
       <v-btn flat :to="{ name: 'settings.profile' }">{{ user.data.name }}</v-btn>
       <v-btn flat @click.prevent="logout">{{ $t('logout') }}</v-btn>
     </template>

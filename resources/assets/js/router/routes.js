@@ -8,9 +8,9 @@ export default ({
   stockCrudGuard,
   stockPrivatsGuard,
   supplyGuard,
-  financesGuard
+  financesGuard,
+  manufacturyGuard
 }) => [
-
   ...userInviteGuard([{
     path: '/user/invite',
     name: 'user.invite',
@@ -136,6 +136,14 @@ export default ({
     name: 'password.reset',
     component: require('~/pages/auth/password/reset.vue')
   }]),
+
+  ...manufacturyGuard(([
+      {
+        path: 'manufactory',
+        name: 'manufactory',
+        component: require('~/pages/manufactory.vue'),
+      }
+    ])),
 
   {
     path: '*',

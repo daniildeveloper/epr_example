@@ -9,7 +9,7 @@ Vue.use(Meta)
 Vue.use(Router)
 
 const router = make(
-  routes({ authGuard, guestGuard, userInviteGuard, revokeUserAccessGuard, delegateTaskGuard, makeInventoryGuard, stockCrudGuard, stockPrivatsGuard, supplyGuard, financesGuard })
+  routes({ authGuard, guestGuard, userInviteGuard, revokeUserAccessGuard, delegateTaskGuard, makeInventoryGuard, stockCrudGuard, stockPrivatsGuard, supplyGuard, financesGuard, manufacturyGuard })
 )
 
 sync(store, router)
@@ -198,6 +198,21 @@ function financesGuard(routes) {
       next({name: 'home'});
     }
   })
+}
+
+/**
+ * Manufactory checker
+ * @param  {[type]} routes [description]
+ * @return {[type]}        [description]
+ */
+function manufacturyGuard(routes) {
+  return beforeEnter(routes, (to, from, next) => {
+    if (hasPermission('manufactory')) {
+      next();
+    } else {
+      next({name: 'home'});
+    }
+  });
 }
 
 function hasPermission(permission) {

@@ -84,6 +84,7 @@ class UsersTableSeeder extends Seeder
             ['name' => 'hide_wares', 'description' => 'Скрывать товары'],
             ['name' => 'show_stock_info', 'description' => 'Просмотр товарных номенклатур'],
             ['name' => 'end_accounting_period', 'description' => 'Завершать отчетный период'],
+            ['name' => 'manufactory', 'description' => 'Цех']
         ];
 
         foreach ($permissions as $p) {
@@ -115,6 +116,7 @@ class UsersTableSeeder extends Seeder
             'hide_wares',
             'show_stock_info',
             'end_accounting_period',
+            'manufactory'
         ]);
 
         $saleDirector = Role::where('name', 'directorSale')->first();
@@ -132,6 +134,7 @@ class UsersTableSeeder extends Seeder
             'make_inventory',
             'unallow_proposals',
             'show_stock_info',
+            'manufactory'
         ]);
 
         User::where('email', 'saledirector@trigorg.ru')->first()->assignRole('directorSale');
