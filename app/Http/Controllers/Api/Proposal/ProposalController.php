@@ -939,6 +939,7 @@ class ProposalController extends Controller
         // set tax and partners amount
         $waresSelfCost = 0; // wares self cost
         $partnerAmount = $proposal->partner_payment ? (int) $proposal->partner_payment : 0; // partner payment
+        $workersColorProfit = 0;
 
         // send to purses to
         foreach ($proposal->wares as $proposal_ware) {
@@ -984,6 +985,10 @@ class ProposalController extends Controller
             if ($proposal_ware->color != null) {
                 // total color incomes
                 $colorTotal = $proposal_ware->color_price * $proposal_ware->count;
+
+                // increase workers color profit
+                $workersColorProfit += $colorTotal;
+
                 // send to workers purse
                 $colorProfitTransaction              = new MoneyTransaction();
                 $colorProfitTransaction->purse_to_id = Purse::where('slug', 'workers_purse')->first()->id;
@@ -1008,7 +1013,7 @@ class ProposalController extends Controller
             // send to total incomes purse
             $totalTransaction              = new MoneyTransaction();
             $totalTransaction->purse_to_id = Purse::where('slug', 'salers_money')->first()->id;
-            $totalTransaction->sum         = $proposalWaresPrice + (($proposalWaresPrice * $proposal->tax) / 100);
+            $totalTransaction->sum         = $proposalWaresPrice + (($proposalWaresPrice * $proposal->tax) / 100) + $workersColorProfit;
             $totalTransaction->proposal_id = $proposal->id;
             $totalTransaction->argument    = "Общий доход за заявку $proposal->code";
             $totalTransaction->save();
