@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use League\Csv\Reader;
 use League\Csv\Statement;
+use Illuminate\Support\Facades\Log;
 
 class ImportCommandSetup extends Command
 {
@@ -28,22 +29,49 @@ class ImportCommandSetup extends Command
      * @var array
      */
     protected $columns = [
-        'client'          => [
+        'client'            => [
             'Клиент',
         ],
-        'wares_count'     => [
+        'wares_count'       => [
             'Кол-во',
         ],
-        'ware_name'       => [
+        'ware_name'         => [
             'Марка',
         ],
-        'date_created_at' => [
+        'date_created_at'   => [
             'БЕЗ НДС' => [
                 'typo' => 'without_nds',
             ],
             'С НДС'   => [
                 'typo' => 'with_nds',
             ],
+        ],
+        'ware_gruntovka'    => [
+            'Грунтовка л',
+        ],
+        'ware_propitka'     => [
+            'Пропитка л',
+        ],
+        'ware_elastik'      => [
+            'Эластификатор',
+        ],
+        'ware_skotch'       => [
+            'Скотч',
+        ],
+        'ware_skotch_width' => [
+            'Толщина',
+        ],
+        'self_cost'         => [
+            'Сумма за г.п.э.с.',
+        ],
+        'sum'               => [
+            'Сумма',
+        ],
+        'partner'           => [
+            'откат',
+        ],
+        'clean_sum'         => [
+            'Сумма очищенная',
         ],
     ];
 
@@ -72,6 +100,9 @@ class ImportCommandSetup extends Command
 
         foreach ($this->files as $file) {
             $columns = $this->columns_setup($file);
+
+            Log::info('Show columns ...');
+            Log::info($columns);
 
             $this->line('Columns...');
             foreach ($columns as $key => $value) {
@@ -103,7 +134,7 @@ class ImportCommandSetup extends Command
             'Скотч',
             'Толщина',
             'Сумма за г.п.э.с.',
-            'Сумма ',
+            'Сумма',
             'откат',
             'бонус',
             'Сумма очищенная',
@@ -112,10 +143,11 @@ class ImportCommandSetup extends Command
         $stmt    = (new Statement())->offset(0)->limit(1);
         $records = $stmt->process($csv);
 
+        // Записываем в каком ключе в файлке для импорта находится нужный массив
         foreach ($records as $record) {
             foreach ($record as $k => $value) {
                 $this->line("[$k] => $value");
-                if (in_array($value, $expected_columns_names)) {
+                if (in_array(trim($value), $expected_columns_names)) {
                     $columns[$value] = array_search($value, $expected_columns_names);
                 }
             }
@@ -130,8 +162,13 @@ class ImportCommandSetup extends Command
         $stmt    = (new Statement())->offset(0);
         $records = $stmt->process($csv);
 
+        $this->line("Records clients index: " . $columns[$this->columns['client'][0]]);
+
         foreach ($records as $record) {
-            $this->line($record);
+            // $this->line($record);
+            $proposal = [];
+            // $this->line('Proposal client ' . $record[]);
+            // Log::info($proposal);
         }
 
     }
