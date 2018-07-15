@@ -21,12 +21,15 @@
             </v-flex>
         </v-layout>
         <!-- end first row with buttons -->
+        <inventories/>
     </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 import axios from 'axios';
+
+import Inventories from '~/stock/inventory/inventories-list';
 
 /**
  * Component to show all pages
@@ -38,6 +41,10 @@ export default {
   computed: mapGetters({
     user: 'authUser'
   }),
+
+  components: {
+    Inventories,
+  },
 
   metaInfo () {
     return { title: 'Цех' }
