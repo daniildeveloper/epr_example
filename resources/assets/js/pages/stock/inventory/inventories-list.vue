@@ -1,11 +1,13 @@
 <template>
-
+    <div>
+        <new-inventory/>
+    </div>
 </template>
 
 <script>
 import axios from 'axios';
 
-import Inventories from '~/stock/inventory/inventories-list';
+import NewInventory from '~/pages/stock/inventory/new-inventory';
 
 /**
  * Component to show history inventories data
@@ -13,6 +15,10 @@ import Inventories from '~/stock/inventory/inventories-list';
 export default {
 
   name: 'inventories-list',
+
+  components: {
+    NewInventory
+  },
 
   data () {
     return {

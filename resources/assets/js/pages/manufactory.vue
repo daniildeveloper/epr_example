@@ -29,7 +29,7 @@
 import { mapGetters } from 'vuex';
 import axios from 'axios';
 
-import Inventories from '~/stock/inventory/inventories-list';
+import Inventories from '~/pages/stock/inventory/inventories-list';
 
 /**
  * Component to show all pages
