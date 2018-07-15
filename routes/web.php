@@ -75,6 +75,11 @@ Route::group(['prefix' => 'api'], function () {
             Route::get('/wareshow/show/{id}', 'Api\Stock\WareController@showVisible');
         });
 
+        Route::group(['prefix' => 'inventory', 'middleware' => 'permission:make_inventory'], function () {
+            Route::get('/inventory-submit', 'Api\Stock\InventoryController@inventory_submit');
+            Route::resource('/', 'Api\Stock\InventoryController');
+        });
+
         Route::group(['prefix' => 'stock-data', 'middleware' => 'permission:show_stock_info'], function () {
             Route::get('/', 'Api\Stock\NomenclatureCreationDataControlller@get');
             Route::get('/frameworks', 'Api\Stock\NomenclatureCreationDataControlller@getFrameworks');

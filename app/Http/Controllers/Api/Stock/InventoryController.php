@@ -3,16 +3,14 @@
 namespace App\Http\Controllers\Api\Stock;
 
 use App\Http\Controllers\Controller;
-use App\Models\DepartamentsBinding;
-use App\Models\Framework;
 use App\Models\Inventory;
 use App\Models\InventorySubmit as Submit;
 use App\Models\Packaging;
 use App\Models\RestFramework;
 use App\Models\Sticker;
+use DB;
 use Illuminate\Http\Request;
 use JWTAuth;
-use DB;
 
 class InventoryController extends Controller
 {
@@ -24,6 +22,19 @@ class InventoryController extends Controller
     public function index(Request $request)
     {
         $is = DB::table('inventories')->orderBy('id', 'desc')->paginate(40);
+
+        $types = [
+            [
+                'slug' => 'Основы',
+                'name' => 'rest_frameworks',
+            ], [
+                'slug' => 'Наклейки',
+                'name' => 'stickers',
+            ], [
+                'slug' => 'Упаковки',
+                'name' => 'packagings',
+            ],
+        ];
 
         return response()->json($is, 200);
     }
@@ -48,14 +59,12 @@ class InventoryController extends Controller
     {
         $user = JWTAuth::toUser($request->header('Authorization'));
 
-        $departament_id            = DepartamentsBinding::first()->workers_id;
         $inventory                 = new Inventory();
-        $inventory->departament_id = $departament_id;
         $inventory->answered_id    = $user->id;
         $inventory->component_type = $request->component_type;
         $inventory->component_id   = $request->component_id;
-        $inventory->expected_rests = $this->calclulateExpectedRests($departament_id, $request->component_type, $request->component_id)['expected_rests'];
-        $inventory->expected_sum   = $this->calclulateExpectedRests($departament_id, $request->component_type, $request->component_id)['expected_sum'];
+        $inventory->expected_rests = $request->expected_rests;
+        $inventory->expected_sum   = $request->expected_sum;
         $inventory->real_sum       = $request->real_sum;
         $inventory->real_rest      = $request->real_rest;
 
@@ -122,26 +131,22 @@ class InventoryController extends Controller
         //
     }
 
-    /**
-     * Calculate expected rests for each departament
-     * @param  [type] $departament_id [description]
-     * @return [type]                 [description]
-     */
-    public function calclulateExpectedRests(
-        $departament_id,
-        $component_type,
-        $component_id
-    ) {
-        return 1000 * 1;
-    }
-
     public function data()
     {
         return reponse()->json([
-            'frameworks'      => Framework::all(),
             'rest_frameworks' => RestFramework::all(),
             'packagings'      => Packaging::all(),
             'sticker'         => Sticker::all(),
         ], 200);
+    }
+
+    public function inventory_submit(Request $request)
+    {
+        $inventory_submit = Submit::findOrFail($request->id);
+
+        $inventory_submit->submited = true;
+        $inventory_submit->save();
+
+        return response()->json($inventory_submit, 200);
     }
 }
