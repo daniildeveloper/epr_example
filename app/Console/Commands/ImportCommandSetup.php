@@ -65,7 +65,7 @@ class ImportCommandSetup extends Command
             'Сумма за г.п.э.с.',
         ],
         'sum'               => [
-            'Сумма',
+            'Сумма ',
         ],
         'partner'           => [
             'откат',
@@ -74,6 +74,8 @@ class ImportCommandSetup extends Command
             'Сумма очищенная',
         ],
     ];
+
+    protected $types = ['БЕЗ НДС', 'С НДС'];
 
     protected $files = [
         './storage/app/public/2.csv',
@@ -165,16 +167,38 @@ class ImportCommandSetup extends Command
 
         $this->line("Records clients index: " . $columns[$this->columns['client'][0]]);
 
-        // $first_line_index = ;
+        $first_line_index = '';
         // $this->line("First line index is " . $first_line_index);
 
         foreach ($records as $record) {
-            // $this->line($record);
-            $proposal = [];
-            // $this->line('Proposal creation date' . $record[$columns[$this->columns['date_created_at'][0]]]);
-            $this->line('Proposal client ' . $record[$columns[$this->columns['client'][0]]]);
-            // Log::info($proposal);
+            $first_element = 0;
+
+            while ($record[$first_element] === '') {
+                $this->line('First element is empty. "' . $record[$first_element] . '"');
+                $first_element++;
+
+                // TODO: check for overrides and typos
+                if ($record[$first_element] === $this->types[0] || $record[$first_element] === $this->types[1]) {
+                    $first_line_index = $record[$first_element];
+                }
+
+                $this->line("First element " . $record[$first_element]);
+            }
+
+            if ($first_line_index != '' || ($record[0] === '' && $record[1] === '' && $record[2] === '')) {
+                $this->line('Proposal client ' . $record[$columns[$this->columns['client'][0]]]);
+                $proposal = [
+                    'client' => $record[$columns[$this->columns['client'][0]]],
+                    'sum'    => $record[$columns[$this->columns['sum'][0]]],
+                ];
+                Log::info($proposal);
+
+                $results[] = $proposal;
+            }
+
         }
+
+        return $results;
 
     }
 }
