@@ -3,9 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use League\Csv\Reader;
 use League\Csv\Statement;
-use Illuminate\Support\Facades\Log;
 
 class ImportCommandSetup extends Command
 {
@@ -125,15 +125,15 @@ class ImportCommandSetup extends Command
         $columns = [];
 
         $expected_columns_names = [
-            'Клиент',
             'Кол-во',
+            'Клиент',
             'Марка',
             'Грунтовка л',
-            'Пропитка л',
             'Эластификатор',
-            'Скотч',
             'Толщина',
+            'Скотч',
             'Сумма за г.п.э.с.',
+            'Пропитка л',
             'Сумма',
             'откат',
             'бонус',
@@ -148,7 +148,8 @@ class ImportCommandSetup extends Command
             foreach ($record as $k => $value) {
                 $this->line("[$k] => $value");
                 if (in_array(trim($value), $expected_columns_names)) {
-                    $columns[$value] = array_search($value, $expected_columns_names);
+                    // $columns[$value] = array_search($value, $expected_columns_names);
+                    $columns[$value] = $k;
                 }
             }
         }
@@ -164,10 +165,14 @@ class ImportCommandSetup extends Command
 
         $this->line("Records clients index: " . $columns[$this->columns['client'][0]]);
 
+        // $first_line_index = ;
+        // $this->line("First line index is " . $first_line_index);
+
         foreach ($records as $record) {
             // $this->line($record);
             $proposal = [];
-            // $this->line('Proposal client ' . $record[]);
+            // $this->line('Proposal creation date' . $record[$columns[$this->columns['date_created_at'][0]]]);
+            $this->line('Proposal client ' . $record[$columns[$this->columns['client'][0]]]);
             // Log::info($proposal);
         }
 
