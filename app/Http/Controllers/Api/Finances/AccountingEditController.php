@@ -42,4 +42,6 @@ class AccountingEditController extends Controller
 
         return response()->json($accountingPeriods, 200);
     }
+
+    
 }
