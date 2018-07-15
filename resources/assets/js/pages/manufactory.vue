@@ -19,6 +19,10 @@
                   </v-card>
                 </v-dialog>
             </v-flex>
+
+            <v-flex>
+              <new-inventory/>
+            </v-flex>
         </v-layout>
         <!-- end first row with buttons -->
         <inventories/>
@@ -30,6 +34,7 @@ import { mapGetters } from 'vuex';
 import axios from 'axios';
 
 import Inventories from '~/pages/stock/inventory/inventories-list';
+import NewInventory from '~/pages/stock/inventory/new-inventory';
 
 /**
  * Component to show all pages
@@ -44,6 +49,7 @@ export default {
 
   components: {
     Inventories,
+    NewInventory,
   },
 
   metaInfo () {

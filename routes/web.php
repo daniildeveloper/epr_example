@@ -77,6 +77,7 @@ Route::group(['prefix' => 'api'], function () {
 
         Route::group(['prefix' => 'inventory', 'middleware' => 'permission:make_inventory'], function () {
             Route::get('/inventory-submit', 'Api\Stock\InventoryController@inventory_submit');
+            Route::get('/data', 'Api\Stock\InventoryController@data');
             Route::resource('/', 'Api\Stock\InventoryController');
         });
 

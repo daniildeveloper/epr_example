@@ -139,7 +139,7 @@ export default ({
 
   ...manufacturyGuard(([
       {
-        path: 'manufactory',
+        path: '/manufactory',
         name: 'manufactory',
         component: require('~/pages/manufactory.vue'),
       }

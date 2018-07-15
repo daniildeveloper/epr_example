@@ -16,10 +16,26 @@
           <v-container grid-list-md>
             <v-layout wrap>
               <v-flex xs12 sm6 md4>
-                <v-text-field label="Legal first name" required></v-text-field>
+                <v-select
+                  v-bind:items="types"
+                  label="Тип компонента"
+                  single-line
+                  bottom
+                  item-text="name"
+                  item-value="key"
+                  v-model="inventory_data.component_type"
+                ></v-select>
               </v-flex>
               <v-flex xs12 sm6 md4>
-                <v-text-field label="Legal middle name" hint="example of helper text only on focus"></v-text-field>
+                <v-select
+                  v-bind:items="data[inventory_data.component_type.slug]"
+                  v-model="inventory_data.component_id"
+                  label="Компонент"
+                  single-line
+                  bottom
+                  item-text="name"
+                  item-value="key"
+                ></v-select>
               </v-flex>
               <v-flex xs12 sm6 md4>
                 <v-text-field label="Legal last name" hint="example of persistent helper text"
@@ -76,8 +92,33 @@ export default {
   data () {
     return {
         dialog: false,
+        data: {
+            rest_frameworks: [],
+            packagings: [],
+            stickers: [],
+        },
+        types: [],
+
+        inventory_data: {
+            component_type: null,
+            component_id: null,
+        }
+    };
+  },
+
+  methods: {
+        getData() {
+            axios.get('/api/inventory/data')
+                .then(response => {
+                    this.data = response.data.data;
+                    this.types = response.data.types;
+                })
+        }
+    },
+
+    mounted() {
+        this.getData();
     }
-  }
 }
 </script>
 

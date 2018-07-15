@@ -128,16 +128,33 @@ class InventoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // slinece is golden
     }
 
     public function data()
     {
-        return reponse()->json([
+        $types = [
+            [
+                'name' => 'Основы',
+                'slug' => 'rest_frameworks',
+            ], [
+                'name' => 'Наклейки',
+                'slug' => 'stickers',
+            ], [
+                'name' => 'Упаковки',
+                'slug' => 'packagings',
+            ],
+        ];
+
+        $data = [
             'rest_frameworks' => RestFramework::all(),
             'packagings'      => Packaging::all(),
             'sticker'         => Sticker::all(),
-        ], 200);
+        ];
+        return response()->json([
+            'types' => $types,
+            'data'  => $data]
+            , 200);
     }
 
     public function inventory_submit(Request $request)
