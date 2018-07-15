@@ -27,7 +27,25 @@ class ImportCommandSetup extends Command
      * Columns
      * @var array
      */
-    protected $columns = [];
+    protected $columns = [
+        'client'          => [
+            'Клиент',
+        ],
+        'wares_count'     => [
+            'Кол-во',
+        ],
+        'ware_name'       => [
+            'Марка',
+        ],
+        'date_created_at' => [
+            'БЕЗ НДС' => [
+                'typo' => 'without_nds',
+            ],
+            'С НДС'   => [
+                'typo' => 'with_nds',
+            ],
+        ],
+    ];
 
     protected $files = [
         './storage/app/public/2.csv',
@@ -59,6 +77,9 @@ class ImportCommandSetup extends Command
             foreach ($columns as $key => $value) {
                 $this->line("[$key] => $value");
             }
+
+            $this->line('Parsing document $file...');
+            $this->parse_items($file, $columns);
         }
 
         // 2. Вызов сущности модели
@@ -86,11 +107,9 @@ class ImportCommandSetup extends Command
             'откат',
             'бонус',
             'Сумма очищенная',
-
+            'БЕЗ НДС',
         ];
-
-        $stmt = (new Statement())->offset(0)->limit(1);
-
+        $stmt    = (new Statement())->offset(0)->limit(1);
         $records = $stmt->process($csv);
 
         foreach ($records as $record) {
@@ -101,7 +120,19 @@ class ImportCommandSetup extends Command
                 }
             }
         }
-
         return $columns;
+    }
+
+    private function parse_items($file_path, $columns)
+    {
+        $results = [];
+        $csv     = Reader::createFromPath($file_path, 'r');
+        $stmt    = (new Statement())->offset(0);
+        $records = $stmt->process($csv);
+
+        foreach ($records as $record) {
+            $this->line($record);
+        }
+
     }
 }
