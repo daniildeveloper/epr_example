@@ -8,11 +8,11 @@ use App\Models\InventorySubmit as Submit;
 use App\Models\Packaging;
 use App\Models\RestFramework;
 use App\Models\Sticker;
-use DB;
 use Illuminate\Http\Request;
 use JWTAuth;
 use Log;
 use Validator;
+use App\User;
 
 class InventoryController extends Controller
 {
@@ -23,7 +23,7 @@ class InventoryController extends Controller
      */
     public function index(Request $request)
     {
-        $is = DB::table('inventories')->orderBy('id', 'desc')->paginate(40);
+        $is = Inventory::with('answered')->orderBy('id', 'desc')->paginate(40);
 
         $types = [
             [
@@ -38,7 +38,17 @@ class InventoryController extends Controller
             ],
         ];
 
-        return response()->json($is, 200);
+        $components = [
+            'rest_frameworks' => RestFramework::all(),
+            'packagings'      => Packaging::all(),
+            'stickers'        => Sticker::all(),
+        ];
+
+        return response()->json([
+            'inventories' => $is,
+            'types'       => $types,
+            'components'  => $components,
+        ], 200);
     }
 
     /**

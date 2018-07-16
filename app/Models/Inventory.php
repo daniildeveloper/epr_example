@@ -10,6 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 class Inventory extends Model
 {
     public function answered() {
-      return $this->belongsTo('App\Models\User', 'answered_id');
+      return $this->belongsTo('App\User', 'answered_id');
     }
 }
