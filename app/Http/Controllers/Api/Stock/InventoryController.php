@@ -11,8 +11,8 @@ use App\Models\Sticker;
 use DB;
 use Illuminate\Http\Request;
 use JWTAuth;
-use Validator;
 use Log;
+use Validator;
 
 class InventoryController extends Controller
 {
@@ -65,7 +65,7 @@ class InventoryController extends Controller
             'expected_rests' => 'required|integer|min:1',
             'expected_sum'   => 'required|integer|min:1',
             'real_sum'       => 'required|integer|min:1',
-            'real_rest'     => 'required|integer|min:1',
+            'real_rest'      => 'required|integer|min:1',
         ];
         $input = $request->all();
         // validate data
