@@ -100,9 +100,11 @@ export default {
         types: [],
 
         inventory_data: {
-            component_type: null,
-            component_id: null,
-        }
+            component_type: '',
+            component_id: '',
+        },
+
+        componentsList: [],
     };
   },
 
@@ -118,6 +120,15 @@ export default {
 
     mounted() {
         this.getData();
+    },
+
+    watch: {
+        'inventory_data.component_type': function (val, oldVal) {
+            console.log(val.slug)
+            console.log('this.data', this.data[val.slug])
+            this.componentsList = this.data[val.slug];
+            console.log(this.componentsList)
+        }
     }
 }
 </script>
