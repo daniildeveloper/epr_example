@@ -58,14 +58,11 @@ export default {
   methods: {
     getComponentName(id, type) {
         let result = '';
-        console.log('id and type', id + ", " + type)
-        console.log('components_type', this.components[type])
         this.components[type].forEach(function (item) {
             if (parseInt(item.id) === parseInt(id)) {
                 result = item.name;
             }
         });
-        console.log('result', result)
         return result;
     },
 
