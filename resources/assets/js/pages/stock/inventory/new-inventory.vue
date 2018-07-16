@@ -64,16 +64,11 @@
               </v-flex>
               <!-- end component select -->
 
-              
-              <v-flex xs12 sm6 md4>
-                <v-text-field label="Legal last name" hint="example of persistent helper text"
-                  persistent-hint
-                  required
-                ></v-text-field>
-              </v-flex>
+              <!-- expected rests -->
               <v-flex xs12>
-                <v-text-field label="Email" required></v-text-field>
+                <headline>Ожидаемые остатки</headline>
               </v-flex>
+              <!-- end expected rests -->
               <v-flex xs12>
                 <v-text-field label="Password" type="password" required></v-text-field>
               </v-flex>
