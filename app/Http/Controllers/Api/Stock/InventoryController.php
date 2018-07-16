@@ -149,7 +149,7 @@ class InventoryController extends Controller
         $data = [
             'rest_frameworks' => RestFramework::all(),
             'packagings'      => Packaging::all(),
-            'sticker'         => Sticker::all(),
+            'stickers'         => Sticker::all(),
         ];
         return response()->json([
             'types' => $types,

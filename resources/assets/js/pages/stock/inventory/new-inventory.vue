@@ -26,17 +26,45 @@
                   v-model="inventory_data.component_type"
                 ></v-select>
               </v-flex>
+
+              <!-- component id select -->
               <v-flex xs12 sm6 md4>
                 <v-select
-                  v-bind:items="data[inventory_data.component_type.slug]"
+                  v-if="inventory_data.component_type.slug === 'rest_frameworks'"
+                  v-bind:items="data.rest_frameworks"
                   v-model="inventory_data.component_id"
-                  label="Компонент"
+                  label="Основы"
+                  single-line
+                  bottom
+                  item-text="name"
+                  item-value="key"
+                ></v-select>
+
+                <v-select
+                  v-if="inventory_data.component_type.slug === 'stickers'"
+                  v-bind:items="data.stickers"
+                  v-model="inventory_data.component_id"
+                  label="Наклейки"
+                  single-line
+                  bottom
+                  item-text="name"
+                  item-value="key"
+                ></v-select>
+
+                <v-select
+                  v-if="inventory_data.component_type.slug === 'packagings'"
+                  v-bind:items="data.packagings"
+                  v-model="inventory_data.component_id"
+                  label="Упаковки"
                   single-line
                   bottom
                   item-text="name"
                   item-value="key"
                 ></v-select>
               </v-flex>
+              <!-- end component select -->
+
+              
               <v-flex xs12 sm6 md4>
                 <v-text-field label="Legal last name" hint="example of persistent helper text"
                   persistent-hint
@@ -121,15 +149,6 @@ export default {
     mounted() {
         this.getData();
     },
-
-    watch: {
-        'inventory_data.component_type': function (val, oldVal) {
-            console.log(val.slug)
-            console.log('this.data', this.data[val.slug])
-            this.componentsList = this.data[val.slug];
-            console.log(this.componentsList)
-        }
-    }
 }
 </script>
 
