@@ -64,38 +64,39 @@
               </v-flex>
               <!-- end component select -->
 
+              <br>
+              <br>
+
               <!-- expected rests -->
               <v-flex xs12>
                 <headline>Ожидаемые остатки</headline>
               </v-flex>
+              <v-flex sm6>
+                <v-text-field label="Количество" type="number" v-model="inventory_data.expected_rests" required></v-text-field>
+              </v-flex>
+               <v-flex sm6>
+                <v-text-field label="Сумма" type="number" v-model="inventory_data.expected_sum" required></v-text-field>
+              </v-flex>
               <!-- end expected rests -->
+
+              <!-- real rests -->
               <v-flex xs12>
-                <v-text-field label="Password" type="password" required></v-text-field>
+                <headline>Реальные остатки остатки</headline>
               </v-flex>
-              <v-flex xs12 sm6>
-                <v-select
-                  label="Age"
-                  required
-                  :items="['0-17', '18-29', '30-54', '54+']"
-                ></v-select>
+              <v-flex sm6>
+                <v-text-field label="Количество" type="number" v-model="inventory_data.real_rest" required></v-text-field>
               </v-flex>
-              <v-flex xs12 sm6>
-                <v-select
-                  label="Interests"
-                  multiple
-                  autocomplete
-                  chips
-                  :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
-                ></v-select>
+               <v-flex sm6>
+                <v-text-field label="Сумма" type="number" required v-model="inventory_data.real_sum"></v-text-field>
               </v-flex>
+              <!-- end reald rests -->
             </v-layout>
           </v-container>
-          <small>*indicates required field</small>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click.native="dialog = false">Закрыть</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="dialog = false">Сохранить</v-btn>
+          <v-btn color="blue darken-1" flat @click.native="submit()">Сохранить</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -125,6 +126,10 @@ export default {
         inventory_data: {
             component_type: '',
             component_id: '',
+            expected_rests: null,
+            expected_sum: null,
+            real_rest: null,
+            real_sum: null,
         },
 
         componentsList: [],
@@ -138,6 +143,43 @@ export default {
                     this.data = response.data.data;
                     this.types = response.data.types;
                 })
+        },
+
+        submit() {
+          this.$store.dispatch('setLoading', {
+            loading: true
+          });
+
+          axios.post('/api/inventory', {
+            component_type: this.inventory_data.component_type.slug,
+            component_id: this.inventory_data.component_id.id,
+            expected_rests: this.inventory_data.expected_rests,
+            expected_sum: this.inventory_data.expected_sum,
+            real_rest: this.inventory_data.real_rest,
+            real_sum: this.inventory_data.real_sum,
+          }).then(response => {
+            // disable loading
+            this.$store.dispatch('setLoading', {
+              loading: false
+            });
+
+            // inventory is successfull
+            this.$store.dispatch('responseMessage', {
+              type: 'success',
+              text: 'Проведена инвентаризация',
+              modal: false
+            });
+
+            // clear object
+            this.inventory_data = {
+              component_type: '',
+              component_id: '',
+              expected_rests: null,
+              expected_sum: null,
+              real_rest: null,
+              real_sum: null,
+            };
+          });
         }
     },
 

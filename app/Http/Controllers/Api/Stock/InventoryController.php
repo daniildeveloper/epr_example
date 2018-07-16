@@ -82,6 +82,8 @@ class InventoryController extends Controller
             $inventory->save();
         }
 
+        return response()->json($inventory, 200);
+
     }
 
     /**
@@ -149,7 +151,7 @@ class InventoryController extends Controller
         $data = [
             'rest_frameworks' => RestFramework::all(),
             'packagings'      => Packaging::all(),
-            'stickers'         => Sticker::all(),
+            'stickers'        => Sticker::all(),
         ];
         return response()->json([
             'types' => $types,
