@@ -2,84 +2,51 @@
 
 namespace App\Http\Controllers\Api\Manufactory;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Manufactory\Watch;
+use App\User;
+use Illuminate\Http\Request;
 
 class WatchController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @api {GET} /api/manufactory/watchers GetManufactoryWatchers
+     * @apiGroup Manufactory
      */
-    public function index()
+    public function getWatchers(Request $request)
     {
-        
+        $users    = User::all();
+        $watchers = []; // all watchers
+
+        foreach ($users as $user) {
+            if ($user->hasRole('worker')) {
+                $watchers[] = $user;
+            }
+        }
+
+        return response()->json($watchers, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function getWatchesByWatcher(Request $request)
     {
-        //
+        $watcher_id = $request->user_id;
+        $watches    = Watch::where('watcher_id', $watcher_id)->limit(20)->get();
+
+        return response()->json($watches, 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
-    {
-        //
-    }
+    {}
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
+    public function addMoney(Request $request)
+    {}
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+    public function decreaseMoney(Request $request)
+    {}
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+    private function calculateWatchFinaces($montly_payment, $created_at, $payment)
+    {}
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+    public function getMyWatch(Request $request)
+    {}
 }
