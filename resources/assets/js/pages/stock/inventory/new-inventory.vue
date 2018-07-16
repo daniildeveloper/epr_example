@@ -23,6 +23,8 @@
                   bottom
                   item-text="name"
                   item-value="key"
+                  :error="validationErr.component_type && validationErr.component_type.length > 0"
+                  :error-messages="validationErr.component_type"
                   v-model="inventory_data.component_type"
                 ></v-select>
               </v-flex>
@@ -38,6 +40,8 @@
                   bottom
                   item-text="name"
                   item-value="key"
+                  :error="validationErr.component_id && validationErr.component_id.length > 0"
+                  :error-messages="validationErr.component_id"
                 ></v-select>
 
                 <v-select
@@ -49,6 +53,8 @@
                   bottom
                   item-text="name"
                   item-value="key"
+                  :error="validationErr.component_id && validationErr.component_id.length > 0"
+                  :error-messages="validationErr.component_id"
                 ></v-select>
 
                 <v-select
@@ -60,6 +66,8 @@
                   bottom
                   item-text="name"
                   item-value="key"
+                  :error="validationErr.component_id && validationErr.component_id.length > 0"
+                  :error-messages="validationErr.component_id"
                 ></v-select>
               </v-flex>
               <!-- end component select -->
@@ -72,10 +80,22 @@
                 <headline>Ожидаемые остатки</headline>
               </v-flex>
               <v-flex sm6>
-                <v-text-field label="Количество" type="number" v-model="inventory_data.expected_rests" required></v-text-field>
+                <v-text-field 
+                  label="Количество" 
+                  type="number" 
+                  v-model="inventory_data.expected_rests" 
+                  :error="validationErr.expected_rests && validationErr.expected_rests.length > 0"
+                  :error-messages="validationErr.expected_rests"
+                  required></v-text-field>
               </v-flex>
                <v-flex sm6>
-                <v-text-field label="Сумма" type="number" v-model="inventory_data.expected_sum" required></v-text-field>
+                <v-text-field 
+                  label="Сумма" 
+                  type="number" 
+                  v-model="inventory_data.expected_sum" 
+                  :error="validationErr.expected_sum && validationErr.expected_sum.length > 0"
+                  :error-messages="validationErr.expected_sum"
+                  required></v-text-field>
               </v-flex>
               <!-- end expected rests -->
 
@@ -84,10 +104,22 @@
                 <headline>Реальные остатки остатки</headline>
               </v-flex>
               <v-flex sm6>
-                <v-text-field label="Количество" type="number" v-model="inventory_data.real_rest" required></v-text-field>
+                <v-text-field 
+                  label="Количество" 
+                  type="number"
+                  v-model="inventory_data.real_rest" 
+                  :error="validationErr.real_rest && validationErr.real_rest.length > 0"
+                  :error-messages="validationErr.real_rest"
+                  required></v-text-field>
               </v-flex>
                <v-flex sm6>
-                <v-text-field label="Сумма" type="number" required v-model="inventory_data.real_sum"></v-text-field>
+                <v-text-field 
+                  label="Сумма" 
+                  type="number"
+                  :error="validationErr.real_sum && validationErr.real_sum.length > 0"
+                  :error-messages="validationErr.real_sum"
+                  required 
+                  v-model="inventory_data.real_sum"></v-text-field>
               </v-flex>
               <!-- end reald rests -->
             </v-layout>
@@ -133,6 +165,8 @@ export default {
         },
 
         componentsList: [],
+
+        validationErr: {}
     };
   },
 
@@ -163,22 +197,34 @@ export default {
               loading: false
             });
 
-            // inventory is successfull
-            this.$store.dispatch('responseMessage', {
-              type: 'success',
-              text: 'Проведена инвентаризация',
-              modal: false
-            });
+            if (response.data.status === 'validator_errors') {
+              this.$store.dispatch('responseMessage', {
+                type: 'error',
+                text: 'Ошибки валидации',
+                modal: false,
+              });
+              this.validationErr = response.data.errors;
+            } else {
+              // inventory is successfull
+              this.$store.dispatch('responseMessage', {
+                type: 'success',
+                text: 'Проведена инвентаризация',
+                modal: false
+              });
 
-            // clear object
-            this.inventory_data = {
-              component_type: '',
-              component_id: '',
-              expected_rests: null,
-              expected_sum: null,
-              real_rest: null,
-              real_sum: null,
-            };
+              // clear object
+              this.inventory_data = {
+                component_type: '',
+                component_id: '',
+                expected_rests: null,
+                expected_sum: null,
+                real_rest: null,
+                real_sum: null,
+              };
+              this.dialog = false;
+              this.validationErr = {};
+            }
+            
           });
         }
     },

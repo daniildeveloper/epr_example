@@ -11,6 +11,8 @@ use App\Models\Sticker;
 use DB;
 use Illuminate\Http\Request;
 use JWTAuth;
+use Validator;
+use Log;
 
 class InventoryController extends Controller
 {
@@ -57,6 +59,23 @@ class InventoryController extends Controller
      */
     public function store(Request $request)
     {
+        $rules = [
+            'component_type' => 'required',
+            'component_id'   => 'required|integer|min:1',
+            'expected_rests' => 'required|integer|min:1',
+            'expected_sum'   => 'required|integer|min:1',
+            'real_sum'       => 'required|integer|min:1',
+            'real_rest'     => 'required|integer|min:1',
+        ];
+        $input = $request->all();
+        // validate data
+        $validator = Validator::make($input, $rules);
+
+        if ($validator->fails()) {
+            Log::info($validator->errors()->all());
+            return response()->json(['message' => 'Заполните все поля', 'errors' => $validator->errors(), 'status' => 'validator_errors'], 200);
+        }
+
         $user = JWTAuth::toUser($request->header('Authorization'));
 
         $inventory                 = new Inventory();
