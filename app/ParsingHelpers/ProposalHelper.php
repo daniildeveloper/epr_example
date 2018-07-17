@@ -29,18 +29,18 @@ class ProposalHelper
             ],
         ]);
 
-        foreach ($data['wares'] as $ware) {
-            DB::table('proposal_wares')->insert([
-                'proposal_id'     => $proposal_id,
-                'ware_id'         => $ware['id'],
-                'price_per_count' => $ware['price_per_count'],
-                'count'           => $ware['count'],
-                'color'           => $ware['color'],
-                'color_price'     => $wre['color_price'],
-                'created_at'      => $data['created_at'],
-                'updated_at'      => $data['created_at'],
-            ]);
-        }
+        // foreach ($data['wares'] as $ware) {
+        //     DB::table('proposal_wares')->insert([
+        //         'proposal_id'     => $proposal_id,
+        //         'ware_id'         => $ware['id'],
+        //         'price_per_count' => $ware['price_per_count'],
+        //         'count'           => $ware['count'],
+        //         'color'           => $ware['color'],
+        //         'color_price'     => $wre['color_price'],
+        //         'created_at'      => $data['created_at'],
+        //         'updated_at'      => $data['created_at'],
+        //     ]);
+        // }
 
         return $proposal_id;
     }
