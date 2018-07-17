@@ -15,7 +15,7 @@ class CreateProposalsTable extends Migration
     {
         Schema::create('proposals', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('code')->unique();
+            $table->string('code')->unique()->nullable();
             $table->integer('creator_id');
             $table->string('client');
             $table->string('client_phone');
