@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Manufactory\Watch;
 use App\User;
 use Illuminate\Http\Request;
+use JWTAuth;
 
 class WatchController extends Controller
 {
@@ -30,23 +31,75 @@ class WatchController extends Controller
     public function getWatchesByWatcher(Request $request)
     {
         $watcher_id = $request->user_id;
-        $watches    = Watch::where('watcher_id', $watcher_id)->limit(20)->get();
+        $watches    = Watch::where('watcher_id', $watcher_id)->limit(20)->with('watcher', 'watch_money_transactions')->get();
 
         return response()->json($watches, 200);
     }
 
+    /**
+     * Show watches list
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
     public function store(Request $request)
-    {}
+    {
+        $watch                 = new Watch();
+        $watch->watcher_id     = $request->watcher_id;
+        $watch->begin_date     = Carbon::now()->format('Y-m-d');
+        $watch->montly_payment = $request->montly_payment;
+        $watch->save();
 
+        return response()->json($watch, 200);
+    }
+
+    /**
+     * @api {POST} /api/manufactory/watch/add-money AddMineyForWatch
+     * @apiGroup Manufactory
+     * @apiVersion 0.0.1
+     */
     public function addMoney(Request $request)
-    {}
+    {
+        $t           = new WatchMoneyTransaction();
+        $t->watch_id = $request->watch_id;
+        $t->sum      = $request->sum;
+        $t->refill   = true;
+        $t->save();
 
+        return response()->json($t, 200);
+    }
+
+    /**
+     * @api {POST} /api/manufactory/watch/minus-money MinusMoneyForWatch
+     * @apiGroup Manufactory
+     * @apiVersion 0.0.1
+     */
     public function decreaseMoney(Request $request)
-    {}
+    {
+        $t           = new WatchMoneyTransaction();
+        $t->watch_id = $request->watch_id;
+        $t->sum      = $request->sum;
+        $t->refill   = false;
+        $t->save();
+
+        return response()->json($t, 200);
+    }
 
     private function calculateWatchFinaces($montly_payment, $created_at, $payment)
-    {}
+    {
+        $created_date = Carbon::parse($created_at);
+        $now          = Carbon::now();
 
-    public function getMyWatch(Request $request)
-    {}
+        $worked_days = $created_date->diffInDays($now);
+
+        $payment = $worked_days * ($montly_payment / 30);
+
+        return $payment;
+    }
+
+    public function getMyWatches(Request $request)
+    {
+        $user = JWTAuth::toUser($request->header('Authorization'));
+
+        $watches = Watch::where('watcher_id', $user->id)->limit(20)->with('watcher', 'watch_money_transactions')->get();
+    }
 }

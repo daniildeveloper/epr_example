@@ -16,6 +16,7 @@ class CreateWatchesTable extends Migration
         Schema::create('watches', function (Blueprint $table) {
             $table->increments('id');
             $table->date('begin_date');
+            $table->date('end_date')->nullable();
             $table->integer('monthly_payment');
             $table->integer('watcher_id');
             $table->timestamps();

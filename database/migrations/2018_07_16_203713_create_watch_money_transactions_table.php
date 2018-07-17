@@ -17,7 +17,7 @@ class CreateWatchMoneyTransactionsTable extends Migration
             $table->increments('id');
             $table->integer('watch_id');
             $table->integer('sum');
-            $table->boolean('refill');
+            $table->boolean('refill')->default(true);
             $table->timestamps();
         });
     }
