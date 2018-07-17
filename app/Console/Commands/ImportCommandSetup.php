@@ -169,31 +169,49 @@ class ImportCommandSetup extends Command
 
         $first_line_index = '';
         // $this->line("First line index is " . $first_line_index);
+        //
+        $last_date = '';
 
         foreach ($records as $record) {
             $first_element = 0;
 
             while ($record[$first_element] === '') {
-                $this->line('First element is empty. "' . $record[$first_element] . '"');
                 $first_element++;
 
                 // TODO: check for overrides and typos
                 if ($record[$first_element] === $this->types[0] || $record[$first_element] === $this->types[1]) {
                     $first_line_index = $record[$first_element];
                 }
-
-                $this->line("First element " . $record[$first_element]);
             }
 
-            if ($first_line_index != '' || ($record[0] === '' && $record[1] === '' && $record[2] === '')) {
+            if ($first_line_index != '') {
                 $this->line('Proposal client ' . $record[$columns[$this->columns['client'][0]]]);
-                $proposal = [
-                    'client' => $record[$columns[$this->columns['client'][0]]],
-                    'sum'    => $record[$columns[$this->columns['sum'][0]]],
-                ];
-                Log::info($proposal);
 
-                $results[] = $proposal;
+                if ($record[$columns[$this->columns['client'][0]]] != $this->columns['client'][0] && $record[$columns[$this->columns['client'][0]]] != '') {
+                    $date = str_replace(',', '-', $record[1]);
+
+                    if ($date != '') {
+                        $last_date = $date;
+                    }
+
+                    $this->line("Date created at $date");
+                    $this->line('Тип налога ' . $first_line_index);
+                    $proposal = [
+                        'client'           => $record[$columns[$this->columns['client'][0]]],
+                        'phone'            => '',
+                        'created_at'       => $last_date,
+                        'object'           => '',
+                        'is_with_docs'     => $first_line_index === 'БЕЗ НДС' ? false : true,
+                        'tax'              => '',
+                        'client_deadline'  => $last_date,
+                        'workers_deadline' => $last_date,
+                        'partner_payment'  => $record[$columns[$this->columns['partner'][0]]],
+                    ];
+                    Log::info($proposal);
+
+                    $results[] = $proposal;
+                }
+
             }
 
         }
