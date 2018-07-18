@@ -44,7 +44,7 @@
                   </v-card-title>
 
                   <v-card-text>
-                    <v-flex xs12 v-if="hasRole('owner') && props.item.status <= 7">
+                    <v-flex xs12 v-if="hasRole('owner') && props.item.status_id <= 7">
                       <v-btn @click="changeStatus(props.item.id, 9)">Отменить заявку</v-btn>
                     </v-flex>
 
