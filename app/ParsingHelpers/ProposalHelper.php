@@ -46,8 +46,6 @@ class ProposalHelper
                 'ware_id'         => $ware['id'],
                 'price_per_count' => $ware['price_per_count'],
                 'count'           => $ware['count'],
-                'color'           => $ware['color'],
-                'color_price'     => $ware['color_price'],
                 'created_at'      => $data['created_at'],
                 'updated_at'      => $data['created_at'],
             ]);
@@ -162,19 +160,27 @@ class ProposalHelper
         $id = 1;
         switch ($name) {
             case 'ДЗ':
+                $id = 1;
                 break;
             case 'СТС':
+                $id = 1;
                 break;
             case 'ПР':
+                $id = 1;
                 break;
             case 'СТЖ':
+                $id = 1;
                 break;
             case 'мрамор':
+                $id = 1;
+                break;
 
             default:
                 // code...
                 break;
         }
+
+        return $id;
     }
 
     /**

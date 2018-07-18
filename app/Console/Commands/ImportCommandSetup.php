@@ -3,11 +3,11 @@
 namespace App\Console\Commands;
 
 use App\ParsingHelpers\ProposalHelper as H;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use League\Csv\Reader;
 use League\Csv\Statement;
-use Carbon\Carbon;
 
 class ImportCommandSetup extends Command
 {
@@ -216,7 +216,15 @@ class ImportCommandSetup extends Command
 
                     // add base ware to proposal
                     if ($record[$columns[$this->columns['ware_name'][0]]] != '') {
-                        // 
+                        $ware_count = (int) $record[$columns[$this->columns['wares_count'][0]]];
+                        $clean_sum  = (int) $record[$columns[$this->columns['clean_sum'][0]]];
+                        $new_ware   = [
+                            'id'              => H::parse_ware_name($record[$columns[$this->columns['ware_name'][0]]]),
+                            'price_per_count' => $clean_sum / $ware_count,
+                            'count'           => $ware_count,
+                            'created-at'      => $last_date,
+                        ];
+                        $proposal['wares'][] = $new_ware;
                     }
                     // add additional wares
                     Log::info("Create new proposal");
