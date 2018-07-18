@@ -213,6 +213,12 @@ class ImportCommandSetup extends Command
                         'partner_notes'    => '',
                         'wares'            => [],
                     ];
+
+                    // add base ware to proposal
+                    if ($record[$columns[$this->columns['ware_name'][0]]] != '') {
+                        // 
+                    }
+                    // add additional wares
                     Log::info("Create new proposal");
                     Log::info($proposal);
 
