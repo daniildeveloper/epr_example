@@ -459,7 +459,7 @@ class ProposalController extends Controller
         $month   = $dateNow->month;
         $m       = $this->getCurrentMothInTwoDigits($month);
 
-        $currentPeriod = 2019 - $dateNow->year;
+        $currentPeriod = $dateNow->year - (env('BEGIN_YEAR') - 1);
 
         if ($currentPeriod < 10) {
             $currentPeriod = '0' . $currentPeriod;
