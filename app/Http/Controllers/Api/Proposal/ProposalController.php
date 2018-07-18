@@ -941,66 +941,64 @@ class ProposalController extends Controller
         $partnerAmount      = $proposal->partner_payment ? (int) $proposal->partner_payment : 0; // partner payment
         $workersColorProfit = 0;
 
-        // send to purses to
-        foreach ($proposal->wares as $proposal_ware) {
-            $proposalWareSelfCost = 0;
-            // calculte total incomes for this wares
-            $ware = Ware::find($proposal_ware->id);
-
-            $ware->packaging = $ware->packaging;
-            $ware->framework = $ware->framework;
-            $ware->sticker   = $ware->sticker;
-
-            $chemieCost = $ware->framework->price * $proposal_ware->count;
-            // send money to chemie price
-            $chemieCostTransaction              = new MoneyTransaction();
-            $chemieCostTransaction->purse_to_id = Purse::where('slug', 'sale_oborot')->first()->id;
-            $chemieCostTransaction->sum         = $chemieCost;
-            $chemieCostTransaction->proposal_id = $proposalID;
-            $chemieCostTransaction->argument    = "Возвращаем в оборот деньги за химию " . RestFramework::find($ware->framework_id)->name;
-            $chemieCostTransaction->save();
-
-            // packaging cost transaction
-            $packagingCost                         = $ware->packaging->price * $proposal_ware->count;
-            $packagingCostTransaction              = new MoneyTransaction();
-            $packagingCostTransaction->purse_to_id = Purse::where('slug', 'sale_packagings')->first()->id;
-            $packagingCostTransaction->sum         = $packagingCost;
-            $packagingCostTransaction->proposal_id = $proposalID;
-            $packagingCostTransaction->argument    = 'Стоимость упаковки ' . $ware->packaging->name;
-            $packagingCostTransaction->save();
-
-            // sticker cost
-            $stickerCost                         = $ware->sticker->price * $proposal_ware->count;
-            $stickerCostTransaction              = new MoneyTransaction();
-            $stickerCostTransaction->purse_to_id = Purse::where('slug', 'sale_packagings')->first()->id;
-            $stickerCostTransaction->sum         = $stickerCost;
-            $stickerCostTransaction->proposal_id = $proposalID;
-            $stickerCostTransaction->argument    = 'Стоимость наклейки ' . $ware->sticker->name;
-            $stickerCostTransaction->save();
-
-            $proposalWareSelfCost += $packagingCost + $stickerCost + $chemieCost;
-            $proposalWaresPrice += $proposal_ware->price_per_count * $proposal_ware->count;
-            $waresSelfCost += $proposalWareSelfCost;
-
-            if ($proposal_ware->color != null) {
-                // total color incomes
-                $colorTotal = $proposal_ware->color_price * $proposal_ware->count;
-
-                // increase workers color profit
-                $workersColorProfit += $colorTotal;
-
-                // send to workers purse
-                $colorProfitTransaction              = new MoneyTransaction();
-                $colorProfitTransaction->purse_to_id = Purse::where('slug', 'workers_purse')->first()->id;
-                $colorProfitTransaction->sum         = $colorTotal;
-                $colorProfitTransaction->proposal_id = $proposalID;
-                $colorProfitTransaction->argument    = "Отчисление за прибыль по цвету $proposal_ware->color";
-                $colorProfitTransaction->save();
-            }
-        }
-
         if ($proposal->warranty_case != 1) {
+            // send to purses to
+            foreach ($proposal->wares as $proposal_ware) {
+                $proposalWareSelfCost = 0;
+                // calculte total incomes for this wares
+                $ware = Ware::find($proposal_ware->id);
 
+                $ware->packaging = $ware->packaging;
+                $ware->framework = $ware->framework;
+                $ware->sticker   = $ware->sticker;
+
+                $chemieCost = $ware->framework->price * $proposal_ware->count;
+                // send money to chemie price
+                $chemieCostTransaction              = new MoneyTransaction();
+                $chemieCostTransaction->purse_to_id = Purse::where('slug', 'sale_oborot')->first()->id;
+                $chemieCostTransaction->sum         = $chemieCost;
+                $chemieCostTransaction->proposal_id = $proposalID;
+                $chemieCostTransaction->argument    = "Возвращаем в оборот деньги за химию " . RestFramework::find($ware->framework_id)->name;
+                $chemieCostTransaction->save();
+
+                // packaging cost transaction
+                $packagingCost                         = $ware->packaging->price * $proposal_ware->count;
+                $packagingCostTransaction              = new MoneyTransaction();
+                $packagingCostTransaction->purse_to_id = Purse::where('slug', 'sale_packagings')->first()->id;
+                $packagingCostTransaction->sum         = $packagingCost;
+                $packagingCostTransaction->proposal_id = $proposalID;
+                $packagingCostTransaction->argument    = 'Стоимость упаковки ' . $ware->packaging->name;
+                $packagingCostTransaction->save();
+
+                // sticker cost
+                $stickerCost                         = $ware->sticker->price * $proposal_ware->count;
+                $stickerCostTransaction              = new MoneyTransaction();
+                $stickerCostTransaction->purse_to_id = Purse::where('slug', 'sale_packagings')->first()->id;
+                $stickerCostTransaction->sum         = $stickerCost;
+                $stickerCostTransaction->proposal_id = $proposalID;
+                $stickerCostTransaction->argument    = 'Стоимость наклейки ' . $ware->sticker->name;
+                $stickerCostTransaction->save();
+
+                $proposalWareSelfCost += $packagingCost + $stickerCost + $chemieCost;
+                $proposalWaresPrice += $proposal_ware->price_per_count * $proposal_ware->count;
+                $waresSelfCost += $proposalWareSelfCost;
+
+                if ($proposal_ware->color != null) {
+                    // total color incomes
+                    $colorTotal = $proposal_ware->color_price * $proposal_ware->count;
+
+                    // increase workers color profit
+                    $workersColorProfit += $colorTotal;
+
+                    // send to workers purse
+                    $colorProfitTransaction              = new MoneyTransaction();
+                    $colorProfitTransaction->purse_to_id = Purse::where('slug', 'workers_purse')->first()->id;
+                    $colorProfitTransaction->sum         = $colorTotal;
+                    $colorProfitTransaction->proposal_id = $proposalID;
+                    $colorProfitTransaction->argument    = "Отчисление за прибыль по цвету $proposal_ware->color";
+                    $colorProfitTransaction->save();
+                }
+            }
             // define tax
             $tax = 0;
 
