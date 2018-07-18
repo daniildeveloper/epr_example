@@ -299,4 +299,8 @@ class ReportsController extends Controller
 
         return response()->json($wareData, 200);
     }
+
+    private function getWorkingCapital() {
+        // 1. Берем все деньги
+    }
 }

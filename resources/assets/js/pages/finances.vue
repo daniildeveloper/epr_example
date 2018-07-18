@@ -144,6 +144,9 @@
       <v-flex xs12 sm6>
         <proposals-pie-chart-view></proposals-pie-chart-view>
       </v-flex>
+      <v-flex xs12 sm6>
+        <working-capital/>
+      </v-flex>
     </v-layout>
     
   </div>
@@ -164,6 +167,7 @@ import ReportGenerate from '~/pages/accounting/reports'
 import ProposalsChart from '~/pages/proposal/proposals-pie-chart'
 import ProposalWarrantyCases from '~/pages/accounting/warranty-cases'
 import DefaultTaxProcent from '~/pages/accounting/default-tax-procent'
+import WorkingCapital from '~/pages/accounting/working-capital'
 
 export default {
 
@@ -180,6 +184,7 @@ export default {
     'proposal-warranty-cases-view': ProposalWarrantyCases,
     'default-tax-procent-view': DefaultTaxProcent,
     'salers-incomes-list-view': SalersIncomesList,
+    WorkingCapital,
   },
 
   computed: mapGetters({
