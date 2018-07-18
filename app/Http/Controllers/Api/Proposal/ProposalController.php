@@ -937,8 +937,8 @@ class ProposalController extends Controller
 
         $proposalWaresPrice = 0; // total incomes from wares
         // set tax and partners amount
-        $waresSelfCost = 0; // wares self cost
-        $partnerAmount = $proposal->partner_payment ? (int) $proposal->partner_payment : 0; // partner payment
+        $waresSelfCost      = 0; // wares self cost
+        $partnerAmount      = $proposal->partner_payment ? (int) $proposal->partner_payment : 0; // partner payment
         $workersColorProfit = 0;
 
         // send to purses to
@@ -1042,5 +1042,156 @@ class ProposalController extends Controller
         $partnerMoneyTransaction->argument    = "Отчисление по партнерской программе. Заметки: " . $partner_notes;
         $partnerMoneyTransaction->proposal_id = $proposalID;
         $partnerMoneyTransaction->save();
+    }
+
+    /**
+     * @api {GET} /api/proposal/proposal/sort SortProposals
+     * @apiGroup Proposal
+     * @apiVersion 0.0.1
+     * @apiDescription Available sort types:
+     *     * newest
+     *     * unallowed
+     *     * hot
+     *     * warranty cases
+     *     *
+     */
+    public function sort(Request $request, $sort_type)
+    {
+        $user      = JWTAuth::toUser($request->header('Authorization'));
+        $userID    = $user->id;
+        $proposals = [];
+        switch ($sort_type) {
+            case 'newest':
+                // if user has limited access => return only limited
+                if ($user->hasRole('saler_limited_ops')) {
+                    $proposals = Proposal::where(function ($q) use ($userID) {
+                        $q->where('status_id', '<=', 7);
+                    })->orderBy('created_at', 'desc')->get();
+                } else {
+                    $proposals = Proposal::where(function ($q) {
+                        $q->where('status_id', '<=', 7);
+                    })->orderBy('created_at', 'desc')->get();
+                }
+
+                foreach ($proposals as $proposal) {
+                    $proposal->wares  = ProposalWare::where('proposal_id', $proposal->id)->get();
+                    $proposal->client = $proposal->client;
+                    if ($proposal->object_id != null) {
+                        $proposal->object = $proposal->object;
+                    }
+                    if ($proposal->status_id === 2) {
+                        $proposal->argument = Argument::where('proposal_id', $proposal->id)->orderBy('id', 'desc')->first();
+                    }
+                    foreach ($proposal->wares as $ware) {
+                        $ware = $ware->ware;
+                    }
+                }
+                break;
+            case 'unallowed':
+                // if user has limited access => return only limited
+                if ($user->hasRole('saler_limited_ops')) {
+                    $proposals = Proposal::where(function ($q) use ($userID) {
+                        $q->where('status_id', '<', 3);
+                    })->get();
+                } else {
+                    $proposals = Proposal::where(function ($q) {
+                        $q->where('status_id', '<', 3);
+                    })->get();
+                }
+
+                foreach ($proposals as $proposal) {
+                    $proposal->wares  = ProposalWare::where('proposal_id', $proposal->id)->get();
+                    $proposal->client = $proposal->client;
+                    if ($proposal->object_id != null) {
+                        $proposal->object = $proposal->object;
+                    }
+                    if ($proposal->status_id === 2) {
+                        $proposal->argument = Argument::where('proposal_id', $proposal->id)->orderBy('id', 'desc')->first();
+                    }
+                    foreach ($proposal->wares as $ware) {
+                        $ware = $ware->ware;
+                    }
+                }
+                break;
+            case 'hot':
+                // if user has limited access => return only limited
+                if ($user->hasRole('saler_limited_ops')) {
+                    $proposals = Proposal::where(function ($q) use ($userID) {
+                        $q->where('status_id', '<=', 7)->where('is_hot', true);
+                    })->get();
+                } else {
+                    $proposals = Proposal::where(function ($q) {
+                        $q->where('status_id', '<=', 7)->where('is_hot', true);
+                    })->get();
+                }
+
+                foreach ($proposals as $proposal) {
+                    $proposal->wares  = ProposalWare::where('proposal_id', $proposal->id)->get();
+                    $proposal->client = $proposal->client;
+                    if ($proposal->object_id != null) {
+                        $proposal->object = $proposal->object;
+                    }
+                    if ($proposal->status_id === 2) {
+                        $proposal->argument = Argument::where('proposal_id', $proposal->id)->orderBy('id', 'desc')->first();
+                    }
+                    foreach ($proposal->wares as $ware) {
+                        $ware = $ware->ware;
+                    }
+                }
+
+            case 'warranty_case':
+                // if user has limited access => return only limited
+                if ($user->hasRole('saler_limited_ops')) {
+                    $proposals = Proposal::where(function ($q) use ($userID) {
+                        $q->where('status_id', '<=', 7)->where('warranty_case', true);
+                    })->get();
+                } else {
+                    $proposals = Proposal::where(function ($q) {
+                        $q->where('status_id', '<=', 7)->where('warranty_case', true);
+                    })->get();
+                }
+
+                foreach ($proposals as $proposal) {
+                    $proposal->wares  = ProposalWare::where('proposal_id', $proposal->id)->get();
+                    $proposal->client = $proposal->client;
+                    if ($proposal->object_id != null) {
+                        $proposal->object = $proposal->object;
+                    }
+                    if ($proposal->status_id === 2) {
+                        $proposal->argument = Argument::where('proposal_id', $proposal->id)->orderBy('id', 'desc')->first();
+                    }
+                    foreach ($proposal->wares as $ware) {
+                        $ware = $ware->ware;
+                    }
+                }
+            default:
+                // if user has limited access => return only limited
+                if ($user->hasRole('saler_limited_ops')) {
+                    $proposals = Proposal::where(function ($q) use ($userID) {
+                        $q->where('status_id', '<=', 7);
+                    })->get();
+                } else {
+                    $proposals = Proposal::where(function ($q) {
+                        $q->where('status_id', '<=', 7);
+                    })->get();
+                }
+
+                foreach ($proposals as $proposal) {
+                    $proposal->wares  = ProposalWare::where('proposal_id', $proposal->id)->get();
+                    $proposal->client = $proposal->client;
+                    if ($proposal->object_id != null) {
+                        $proposal->object = $proposal->object;
+                    }
+                    if ($proposal->status_id === 2) {
+                        $proposal->argument = Argument::where('proposal_id', $proposal->id)->orderBy('id', 'desc')->first();
+                    }
+                    foreach ($proposal->wares as $ware) {
+                        $ware = $ware->ware;
+                    }
+                }
+                break;
+        }
+
+        return response()->json($proposals, 200);
     }
 }
