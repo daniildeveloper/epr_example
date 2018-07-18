@@ -641,10 +641,10 @@ class ProposalController extends Controller
                 $packagingM->save();
             }
 
-            if (count($request->declinedRests) > 0) {
-                $this->declineProposalRestsSave($proposal->id, $request->decinedRests);
-                Log::info('Return declined proposals');
-            }
+            // if (count($request->declinedRests) > 0) {
+            //     $this->declineProposalRestsSave($proposal->id, $request->decinedRests);
+            //     Log::info('Return declined proposals');
+            // }
 
             Action::do(3, 'Статус заявки ' . $proposal->code . ' изменился на ' . $proposalStatusToChange->name, $user->id);
 
