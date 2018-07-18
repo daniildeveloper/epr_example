@@ -2,6 +2,10 @@
 
 namespace App\ParsingHelpers;
 
+use App\Models\AccountingDataHistory;
+use App\Models\AccountingPeriodEnd;
+use App\Models\AccountingPeriodEndDetail;
+use App\Models\AccountingPeriodEndPurseDetail;
 use App\Models\FoundPurse;
 use App\Models\MoneyTransaction;
 use App\Models\Packaging;
@@ -313,5 +317,264 @@ class ProposalHelper
         $taxTransaction->save();
 
         return $sum;
+    }
+
+    /**
+     *     1. Получаем список всех незакрытых заявок за прошедший период
+     *     2. Выбираем закрывающую заявку и отсекаем более позние заявки
+     *     3. Считаем прибыль по заявкам
+     *     4. Распределяем прибыль по % соотношению
+     *     5. Вычитаем все транзакции с кошелька и на кошелек с коненой прибыли
+     *     6. Перевод денег с системных на персонализированные кошельки
+     *     7. Закрытие периода
+     * @apiRequestExample:
+     *     {
+     *         proposals_to_close: [1, 2, 3, 4, 5, ...],
+     *     }
+     *
+     * @param Request $request
+     */
+    public static function endAccountingPeriod($proposals_to_close)
+    {
+        $unclosedProposals = null; // lsit of unclosed proposals
+
+        $accountingHistory = [];
+
+        // 3. Считаем прибыль по заявкам
+        $proposalsTotal                     = 0;
+        $workersTotalIncomes                = 0; // total worker incoomes get from money transactions
+        $salersTotalIncomes                 = 0; // total salers incomes get from money transactions
+        $workersPurseID                     = Purse::where('slug', 'workers_profit_purse')->first()->id;
+        $salersPurseID                      = Purse::where('slug', 'salers_profit_purse')->first()->id;
+        $unclosedProposalsIDsArray          = array_values($proposals_to_close); // array for query builder of ids only
+        $accounting_period_packagings_total = 0;
+        $accounting_period_stickers_total   = 0;
+        $accounting_period_frameworks_total = 0;
+
+        // get all workers incomes
+        $workerIncomesMoneyTransactions = MoneyTransaction::where(function ($query) use ($workersPurseID, $unclosedProposalsIDsArray) {
+            $query->where('purse_to_id', $workersPurseID)
+                ->whereIn('proposal_id', $unclosedProposalsIDsArray);
+        })->get();
+
+        // calculate workers Incomes
+        foreach ($workerIncomesMoneyTransactions as $transaction) {
+            $workersTotalIncomes += $transaction->sum;
+            Log::info('Worker total incomes += ' . $transaction->sum);
+        }
+
+        // get all salers incomes
+        $salersIncomesMoneyTransactions = MoneyTransaction::where(function ($query) use ($salersPurseID, $unclosedProposalsIDsArray) {
+            $query->where('purse_to_id', $salersPurseID)
+                ->whereIn('proposal_id', $unclosedProposalsIDsArray);
+        })->get();
+
+        // calculate salers incomes
+        foreach ($salersIncomesMoneyTransactions as $transaction) {
+            $salersTotalIncomes += $transaction->sum;
+        }
+
+        // 5. Вычитаем все транзакции с кошелька и на кошелек с коненой прибыли
+        $latestPeriod                 = AccountingPeriodEnd::orderBy('id', 'desc')->first();
+        $latestPeriodCreatedAt        = $latestPeriod->created_at;
+        $workersPurseTransactionsFrom = MoneyTransaction::where(function ($query) use ($latestPeriodCreatedAt, $workersPurseID) {
+            $query->where('purse_from_id', $workersPurseID)
+                ->where('created_at', '>', $latestPeriodCreatedAt);
+        });
+
+        $salersPurseTransactionsFrom = MoneyTransaction::where(function ($query) use ($latestPeriodCreatedAt, $salersPurseID) {
+            $query->where('purse_from_id', $salersPurseID)
+                ->where('created_at', '>', $latestPeriodCreatedAt);
+        });
+
+        // minus all from transactions
+        foreach ($workersPurseTransactionsFrom as $transaction) {
+            $workersTotalIncomes -= $transaction->sum;
+        }
+        foreach ($salersPurseTransactionsFrom as $transaction) {
+            $salersTotalIncomes -= $transaction->sum;
+        }
+
+        // 6. Перевод денег с системных на персонализированные кошельки
+        $workersProfitTransaction                = new MoneyTransaction();
+        $workersProfitTransaction->purse_from_id = $workersPurseID;
+        $workersProfitTransaction->purse_to_id   = Purse::where('slug', 'workers_purse')->first()->id;
+        $workersProfitTransaction->argument      = "Снятие прибыли цеха";
+        $workersProfitTransaction->sum           = $workersTotalIncomes;
+        $workersProfitTransaction->save();
+
+        // write accounting history workers incomes
+        $accountingHistory['workers_incomes'] = $workersTotalIncomes;
+
+        // 7. Закрытие периода
+        $accounting = new AccountingPeriodEnd();
+        $accounting->save();
+
+        $salersProfitTransaction                = new MoneyTransaction();
+        $salersProfitTransaction->purse_from_id = $salersPurseID;
+        $salersProfitTransaction->argument      = 'Снятие прибыли офиса';
+        $salersProfitTransaction->sum           = $salersTotalIncomes;
+        $salersProfitTransaction->save();
+
+        // accounting history salers total incomes
+        $accountingHistory['salers_incomes'] = $salersTotalIncomes;
+
+        // close all unclosed proposals
+        foreach ($unclosedProposalsIDsArray as $proposalID) {
+            $proposal                           = Proposal::with('wares', 'wares.ware.framework', 'wares.ware.packaging', 'wares.ware.sticker')->find($proposalID);
+            $proposal->accounting_period_end_id = $accounting->id;
+            $proposal->closed                   = true;
+            $proposal->save();
+
+            foreach ($proposal->wares as $ware) {
+                $proposalsTotal += $ware->price_per_count * $ware->count;
+
+                // calculate framework cost
+                $rest_framework_price = $ware->ware->framework->price * $ware->count;
+                $accounting_period_frameworks_total += $rest_framework_price;
+
+                // calculate packagings cost
+                $ware->packaging = $ware->ware->packaging;
+                $packaging_price = $ware->ware->packaging->price * $ware->count;
+                $accounting_period_packagings_total += $packaging_price;
+
+                // calculate stickers cost
+                $ware->sticker = $ware->ware->sticker;
+                $sticker_price = $ware->ware->sticker->price * $ware->count;
+                $accounting_period_stickers_total += $sticker_price;
+            }
+        }
+
+        $accountingMainTransaction                = new MoneyTransaction();
+        $accountingMainTransaction->purse_from_id = Purse::where('slug', 'salers_money')->first()->id;
+        $accountingMainTransaction->argument      = 'Обнуление кассы';
+        $accountingMainTransaction->sum           = $proposalsTotal;
+        $accountingMainTransaction->save();
+
+        $accountingHistory['total'] = $proposalsTotal;
+
+        $purse_details = [];
+
+        $purses = Purse::where('open', 1)->get();
+
+        foreach ($purses as $purse) {
+            $pp                = new AccountingPeriodEndPurseDetail();
+            $pp->accounting_id = $accounting->id;
+            $pp->purse_id      = $purse->id;
+            $pp->rest          = self::pursesRestsCalculate($purse->id);
+            $pp->save();
+
+            $purse_details[$purse->id] = [
+                "name" => $purse->name,
+                'rest' => $pp->rest,
+            ];
+        }
+
+        $accountingHistory['purse_details'] = $purse_details;
+
+        $accountingDataHistory                = new AccountingDataHistory();
+        $accountingDataHistory->period_end_id = $accounting->id;
+        $accountingDataHistory->storie        = json_encode($accountingHistory);
+        $accountingDataHistory->save();
+
+        // save details about incomes
+        $packaging_detail                = new AccountingPeriodEndDetail();
+        $packaging_detail->accounting_id = $accounting->id;
+        $packaging_detail->detail_value  = $accounting_period_packagings_total;
+        $packaging_detail->detail_key    = 'packaging_detail';
+        $packaging_detail->save();
+
+        $sticker_detail                = new AccountingPeriodEndDetail();
+        $sticker_detail->accounting_id = $accounting->id;
+        $sticker_detail->detail_value  = $accounting_period_stickers_total;
+        $sticker_detail->detail_key    = 'sticker_detail';
+        $sticker_detail->save();
+
+        $rest_framework_detail                = new AccountingPeriodEndDetail();
+        $rest_framework_detail->accounting_id = $accounting->id;
+        $rest_framework_detail->detail_value  = $accounting_period_frameworks_total;
+        $rest_framework_detail->detail_key    = 'rest_framework_detail';
+        $rest_framework_detail->save();
+    }
+
+    public static function closeProposalSuccessFly($proposal_id) {
+        $proposal = Proposal::find($proposal_id);
+        $proposal->status_id = 8;
+        $proposal->save();
+    }
+
+    /**
+     * @param $purseID
+     */
+    private static function pursesRestsCalculate($purseID)
+    {
+        $purse = Purse::find($purseID);
+
+        // Если кошелек не действителен - средства собраны, или если кошелек - фонд, то по первости возвращаем 0
+        if ($purse->open === false) {
+            return 0;
+        }
+
+        if ($purse->category_id === 3) {
+            $tos = MoneyTransaction::where(function ($query) use ($purseID) {
+                $query->where('purse_to_id', $purseID);
+            })->get();
+            $froms = MoneyTransaction::where(function ($query) use ($purseID) {
+                $query->where('purse_from_id', $purseID);
+            })->get();
+
+            $sumTOS = 0;
+            foreach ($tos as $t) {
+                $sumTOS += $t->sum;
+            }
+
+            $sumFroms = 0;
+            foreach ($froms as $f) {
+                $sumFroms += $f->sum;
+            }
+
+            return $sumTOS - $sumFroms;
+        }
+
+        $latestPeriod = AccountingPeriodEnd::orderBy('id', 'desc')->first();
+
+        $latest = AccountingPeriodEndPurseDetail::where(function ($query) use ($purseID, $latestPeriod) {
+            $query->where('accounting_id', $latestPeriod->id)
+                ->where('purse_id', $purseID);
+        })->first();
+
+        if ($latest === null) {
+            $latest = AccountingPeriodEndPurseDetail::where(function ($query) use ($purseID, $latestPeriod) {
+                $query->where('accounting_id', $latestPeriod->id - 1)
+                    ->where('purse_id', $purseID);
+            })->first();
+            Log::info('Latest period id ' . $latestPeriod->id);
+        } else {
+            Log::info('Latest period id ' . $latestPeriod->id);
+        }
+
+        $tos = MoneyTransaction::where(function ($query) use ($purseID, $latest) {
+            $query->where('purse_to_id', $purseID)
+                ->where('created_at', '>', $latest->created_at);
+        })->get();
+        $froms = MoneyTransaction::where(function ($query) use ($purseID, $latest) {
+            $query->where('purse_from_id', $purseID)
+                ->where('created_at', '>', $latest->created_at);
+        })->get();
+        // dd($tos);
+
+        $sumTOS = 0;
+        foreach ($tos as $t) {
+            $sumTOS += $t->sum;
+        }
+
+        $sumFroms = 0;
+        foreach ($froms as $f) {
+            $sumFroms += $f->sum;
+        }
+
+        $result = $latest->rest + $sumTOS - $sumFroms;
+
+        return $result;
     }
 }

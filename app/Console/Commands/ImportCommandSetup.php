@@ -81,7 +81,7 @@ class ImportCommandSetup extends Command
 
     protected $files = [
         './storage/app/public/2.csv',
-        './storage/app/public/3.csv',
+        // './storage/app/public/3.csv',
     ];
     /**
      * Create a new command instance.
@@ -120,7 +120,12 @@ class ImportCommandSetup extends Command
             foreach ($proposals as $proposal) {
                 $this->line('Allowing proposal #' . $proposal);
                 H::allowProposal($proposal);
+                H::closeProposalSuccessFly($proposal);
             }
+
+            $this->info('Closing accounting period for file ' . $file);
+            H::endAccountingPeriod($proposals);
+
         }
 
         // 2. Вызов сущности модели
