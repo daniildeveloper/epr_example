@@ -362,13 +362,10 @@ class PurseController extends Controller
 
         // close all unclosed proposals
         foreach ($unclosedProposalsIDsArray as $proposalID) {
-            $proposal                           = Proposal::find($proposalID);
+            $proposal                           = Proposal::with('wares', 'wares.ware.rest_framework', 'wares.ware.packaging', 'wares.ware.sticker')->find($proposalID);
             $proposal->accounting_period_end_id = $accounting->id;
             $proposal->closed                   = true;
             $proposal->save();
-            // Log::info('Closed proposal ' . $proposal->code);
-
-            $proposal->wares = $proposal->wares;
 
             foreach ($proposal->wares as $ware) {
                 $proposalsTotal += $ware->price_per_count * $ware->count;
