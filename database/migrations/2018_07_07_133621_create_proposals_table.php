@@ -33,6 +33,7 @@ class CreateProposalsTable extends Migration
             $table->text('partner_notes')->nullable();
             $table->boolean('closed')->default(false);
             $table->boolean('accepted')->default(false);
+            $table->integer('accounting_period_end_id')->nullable();
             $table->timestamps();
         });
     }

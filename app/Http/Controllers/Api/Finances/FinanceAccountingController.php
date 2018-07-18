@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers\Api\Finances;
 
+use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriodEnd;
 use App\Models\AccountingPeriodEndPurseDetail;
+use App\Models\Argument;
 use App\Models\FinancialAccountingPurseRests;
 use App\Models\Proposal;
-use App\Models\ProposalWare;
-use App\Models\Argument;
 use App\Models\ProposalStatus;
 use App\Models\Purse;
 use DB;
 use Illuminate\Http\Request;
-use Log;
-use App\Http\Controllers\Controller;
 
 class FinanceAccountingController extends Controller
 {

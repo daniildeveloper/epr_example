@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api\Finances;
 
+use App\Http\Controllers\Controller;
 use App\Models\AccountingDataHistory;
 use App\Models\AccountingPeriodEnd;
+use App\Models\AccountingPeriodEndDetail;
 use App\Models\AccountingPeriodEndPurseDetail;
 use App\Models\FoundPurse;
 use App\Models\MoneyTransaction;
@@ -17,7 +19,6 @@ use Illuminate\Support\Facades\Validator;
 use php_rutils\RUtils;
 use Pusher\Pusher;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Http\Controllers\Controller;
 
 class PurseController extends Controller
 {
@@ -281,12 +282,15 @@ class PurseController extends Controller
         $accountingHistory = [];
 
         // 3. Считаем прибыль по заявкам
-        $proposalsTotal            = 0;
-        $workersTotalIncomes       = 0; // total worker incoomes get from money transactions
-        $salersTotalIncomes        = 0; // total salers incomes get from money transactions
-        $workersPurseID            = Purse::where('slug', 'workers_profit_purse')->first()->id;
-        $salersPurseID             = Purse::where('slug', 'salers_profit_purse')->first()->id;
-        $unclosedProposalsIDsArray = array_values($request->proposals_to_close); // array for query builder of ids only
+        $proposalsTotal                     = 0;
+        $workersTotalIncomes                = 0; // total worker incoomes get from money transactions
+        $salersTotalIncomes                 = 0; // total salers incomes get from money transactions
+        $workersPurseID                     = Purse::where('slug', 'workers_profit_purse')->first()->id;
+        $salersPurseID                      = Purse::where('slug', 'salers_profit_purse')->first()->id;
+        $unclosedProposalsIDsArray          = array_values($request->proposals_to_close); // array for query builder of ids only
+        $accounting_period_packagings_total = 0;
+        $accounting_period_stickers_total   = 0;
+        $accounting_period_frameworks_total = 0;
 
         // get all workers incomes
         $workerIncomesMoneyTransactions = MoneyTransaction::where(function ($query) use ($workersPurseID, $unclosedProposalsIDsArray) {
@@ -343,6 +347,10 @@ class PurseController extends Controller
         // write accounting history workers incomes
         $accountingHistory['workers_incomes'] = $workersTotalIncomes;
 
+        // 7. Закрытие периода
+        $accounting = new AccountingPeriodEnd();
+        $accounting->save();
+
         $salersProfitTransaction                = new MoneyTransaction();
         $salersProfitTransaction->purse_from_id = $salersPurseID;
         $salersProfitTransaction->argument      = 'Снятие прибыли офиса';
@@ -354,8 +362,9 @@ class PurseController extends Controller
 
         // close all unclosed proposals
         foreach ($unclosedProposalsIDsArray as $proposalID) {
-            $proposal         = Proposal::find($proposalID);
-            $proposal->closed = true;
+            $proposal                           = Proposal::find($proposalID);
+            $proposal->accounting_period_end_id = $accounting->id;
+            $proposal->closed                   = true;
             $proposal->save();
             // Log::info('Closed proposal ' . $proposal->code);
 
@@ -363,6 +372,21 @@ class PurseController extends Controller
 
             foreach ($proposal->wares as $ware) {
                 $proposalsTotal += $ware->price_per_count * $ware->count;
+
+                // calculate framework cost
+                $ware->rest_framework = $ware->rest_framework;
+                $rest_framework_price = $ware->rest_framework->price * $ware->count;
+                $accounting_period_frameworks_total += $rest_framework_price;
+
+                // calculate packagings cost
+                $ware->packaging = $ware->packaging;
+                $packaging_price = $ware->packaging->price * $ware->count;
+                $accounting_period_packagings_total += $packaging_price;
+
+                // calculate stickers cost
+                $ware->sticker = $ware->sticker;
+                $sticker_price = $ware->sticker->price * $ware->count;
+                $accounting_period_stickers_total += $sticker_price;
             }
         }
 
@@ -373,10 +397,6 @@ class PurseController extends Controller
         $accountingMainTransaction->save();
 
         $accountingHistory['total'] = $proposalsTotal;
-
-        // 7. Закрытие периода
-        $accounting = new AccountingPeriodEnd();
-        $accounting->save();
 
         $purse_details = [];
 
@@ -404,10 +424,34 @@ class PurseController extends Controller
         $accountingDataHistory->storie        = json_encode($accountingHistory);
         $accountingDataHistory->save();
 
+        // save details about incomes
+        $packaging_detail                = new AccountingPeriodEndDetail();
+        $packaging_detail->accounting_id = $accounting->id;
+        $packaging_detail->detail_value  = $accounting_period_packagings_total;
+        $packaging_detail->key           = 'packaging_detail';
+        $packaging_detail->save();
+
+        $sticker_detail                = new AccountingPeriodEndDetail();
+        $sticker_detail->accounting_id = $accounting->id;
+        $sticker_detail->detail_value  = $accounting_period_stickers_total;
+        $sticker_detail->key           = 'sticker_detail';
+        $sticker_detail->save();
+
+        $rest_framework_detail                = new AccountingPeriodEndDetail();
+        $rest_framework_detail->accounting_id = $accounting->id;
+        $rest_framework_detail->detail_value  = $accounting_period_frameworks_total;
+        $rest_framework_detail->key           = 'rest_framework_detail';
+        $rest_framework_detail->save();
+
         return response()->json([
             'accounting'      => $accounting,
             'workers_incomes' => $workersTotalIncomes,
             'salers_incomes'  => $salersTotalIncomes,
+            'details'         => [
+                'packaging'      => $packaging_detail,
+                'sticker'        => $sticker_detail,
+                'rest_framework' => $rest_framework_detail,
+            ],
         ], 200);
     }
 
@@ -498,5 +542,12 @@ class PurseController extends Controller
         $this->pusher->trigger('finances-data-change', 'data.updated', []);
 
         return response()->json($transaction, 200);
+    }
+
+    private function calculateComponentMoney()
+    {
+        // get all closed by this proposals ids
+        // get wares
+        // get each ware costs and update total self costs
     }
 }
