@@ -44,4 +44,24 @@ class ProposalHelper
 
         return $proposal_id;
     }
+
+    public static function parse_ware_name($name)
+    {
+        $id = 1;
+        switch ($name) {
+            case 'ДЗ':
+                break;
+            case 'СТС':
+                break;
+            case 'ПР':
+                break;
+            case 'СТЖ':
+                break;
+            case 'мрамор':
+
+            default:
+                // code...
+                break;
+        }
+    }
 }
