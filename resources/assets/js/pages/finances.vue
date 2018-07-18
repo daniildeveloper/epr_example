@@ -85,34 +85,6 @@
         </v-dialog>
       </v-flex>
       <!-- end new report dialog -->
-
-      <!-- new money request dialog -->
-      <v-flex>
-        <v-dialog v-model="moneyRequestDialog" persistent max-width="400px" v-if="hasPermission('money_request')" >
-          <v-btn color="primary" slot="activator" dark>Запрос денег</v-btn>
-          <v-card>
-            <v-card-title>
-              <span class="headline">Запрос денег</span>
-              <v-spacer></v-spacer>
-              <v-menu bottom left>
-                <v-btn @click="moneyRequestDialog = false" icon slot="activator">
-                  <v-icon>close</v-icon>
-                </v-btn>
-              </v-menu>
-            </v-card-title>
-            <v-card-text>
-              <transfer-request-view
-                @new-transfer-request="onNewTransferRequest"
-              ></transfer-request-view>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" flat @click.native="moneyRequestDialog = false">Закрыть</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-flex>
-      <!-- end new money request dialog -->
       
       <!-- accounting period end -->
       <v-flex>
@@ -158,9 +130,6 @@
     <br>
     
     <v-layout row>
-      <v-flex xs12 sm6>
-        <new-money-requests-view></new-money-requests-view>
-      </v-flex>
 
       <v-flex xs12 sm6 v-if="hasPermission('show_stock_privats')">
         <workers-incomes-list-view></workers-incomes-list-view>
@@ -186,8 +155,6 @@ import axios from 'axios';
 
 import Purses from '~/pages/purses/all-purses'
 import ProfitCalculator from '~/pages/purses/profit-calculator'
-import MoneyRequest from '~/pages/purses/transfer-request'
-import NewMoneyRequests from '~/pages/purses/new-money-requets'
 import EndAccountingPeriod from '~/pages/accounting/new-accounting'
 import WorkersIncomesList from '~/pages/accounting/workers-incomes-list'
 import SalersIncomesList from '~/pages/accounting/salers-incomes-list'
@@ -205,13 +172,10 @@ export default {
   components: {
     'purses-view': Purses,
     'profit-calculator-view': ProfitCalculator,
-    'transfer-request-view': MoneyRequest,
-    'new-money-requests-view': NewMoneyRequests,
     'end-accounting-period-view': EndAccountingPeriod,
     'workers-incomes-list-view': WorkersIncomesList,
     'new-purse-view': NewPurse,
     'reports-generate-view': ReportGenerate,
-    // 'declined-proposals-rests-view': DeclinedProposalRests,
     'proposals-pie-chart-view': ProposalsChart,
     'proposal-warranty-cases-view': ProposalWarrantyCases,
     'default-tax-procent-view': DefaultTaxProcent,
