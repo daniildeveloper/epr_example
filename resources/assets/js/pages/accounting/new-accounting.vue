@@ -201,7 +201,15 @@ export default {
           title: 'Прибыль по выбраным заявкам',
           modal: true
         });
+        this.$store.dispatch('setLoading', {
+          loading: false,
+        })
         this.newAccountingDialog = false;
+      })
+      .catch(err => {
+        this.$store.dispatch('setLoading', {
+          loading: false,
+        })
       })
     },
   },

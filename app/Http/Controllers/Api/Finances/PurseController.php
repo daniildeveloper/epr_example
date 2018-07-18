@@ -362,7 +362,7 @@ class PurseController extends Controller
 
         // close all unclosed proposals
         foreach ($unclosedProposalsIDsArray as $proposalID) {
-            $proposal                           = Proposal::with('wares', 'wares.ware.rest_framework', 'wares.ware.packaging', 'wares.ware.sticker')->find($proposalID);
+            $proposal                           = Proposal::with('wares', 'wares.ware.framework', 'wares.ware.packaging', 'wares.ware.sticker')->find($proposalID);
             $proposal->accounting_period_end_id = $accounting->id;
             $proposal->closed                   = true;
             $proposal->save();
@@ -371,18 +371,17 @@ class PurseController extends Controller
                 $proposalsTotal += $ware->price_per_count * $ware->count;
 
                 // calculate framework cost
-                $ware->rest_framework = $ware->rest_framework;
-                $rest_framework_price = $ware->rest_framework->price * $ware->count;
+                $rest_framework_price = $ware->ware->framework->price * $ware->count;
                 $accounting_period_frameworks_total += $rest_framework_price;
 
                 // calculate packagings cost
-                $ware->packaging = $ware->packaging;
-                $packaging_price = $ware->packaging->price * $ware->count;
+                $ware->packaging = $ware->ware->packaging;
+                $packaging_price = $ware->ware->packaging->price * $ware->count;
                 $accounting_period_packagings_total += $packaging_price;
 
                 // calculate stickers cost
-                $ware->sticker = $ware->sticker;
-                $sticker_price = $ware->sticker->price * $ware->count;
+                $ware->sticker = $ware->ware->sticker;
+                $sticker_price = $ware->ware->sticker->price * $ware->count;
                 $accounting_period_stickers_total += $sticker_price;
             }
         }
@@ -425,19 +424,19 @@ class PurseController extends Controller
         $packaging_detail                = new AccountingPeriodEndDetail();
         $packaging_detail->accounting_id = $accounting->id;
         $packaging_detail->detail_value  = $accounting_period_packagings_total;
-        $packaging_detail->key           = 'packaging_detail';
+        $packaging_detail->detail_key           = 'packaging_detail';
         $packaging_detail->save();
 
         $sticker_detail                = new AccountingPeriodEndDetail();
         $sticker_detail->accounting_id = $accounting->id;
         $sticker_detail->detail_value  = $accounting_period_stickers_total;
-        $sticker_detail->key           = 'sticker_detail';
+        $sticker_detail->detail_key           = 'sticker_detail';
         $sticker_detail->save();
 
         $rest_framework_detail                = new AccountingPeriodEndDetail();
         $rest_framework_detail->accounting_id = $accounting->id;
         $rest_framework_detail->detail_value  = $accounting_period_frameworks_total;
-        $rest_framework_detail->key           = 'rest_framework_detail';
+        $rest_framework_detail->detail_key           = 'rest_framework_detail';
         $rest_framework_detail->save();
 
         return response()->json([
