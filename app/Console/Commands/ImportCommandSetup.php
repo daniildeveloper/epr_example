@@ -81,6 +81,7 @@ class ImportCommandSetup extends Command
 
     protected $files = [
         './storage/app/public/2.csv',
+        './storage/app/public/3.csv',
     ];
     /**
      * Create a new command instance.
