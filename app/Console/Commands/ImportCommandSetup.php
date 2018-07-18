@@ -2,10 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\ParsingHelpers\ProposalHelper as H;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use League\Csv\Reader;
 use League\Csv\Statement;
+use Carbon\Carbon;
 
 class ImportCommandSetup extends Command
 {
@@ -111,7 +113,7 @@ class ImportCommandSetup extends Command
                 $this->line("[$key] => $value");
             }
 
-            $this->line('Parsing document $file...');
+            $proposals = $this->line('Parsing document $file...');
             $this->parse_items($file, $columns);
         }
 
@@ -191,6 +193,8 @@ class ImportCommandSetup extends Command
                     $date = str_replace(',', '-', $record[1]);
 
                     if ($date != '') {
+                        $date = date('Y-m-d H:m:s', Carbon::parse($date)->timestamp);
+                        $this->line($date);
                         $last_date = $date;
                     }
 
@@ -206,10 +210,13 @@ class ImportCommandSetup extends Command
                         'client_deadline'  => $last_date,
                         'workers_deadline' => $last_date,
                         'partner_payment'  => $record[$columns[$this->columns['partner'][0]]],
+                        'partner_notes'    => '',
+                        'wares'            => [],
                     ];
+                    Log::info("Create new proposal");
                     Log::info($proposal);
 
-                    $results[] = $proposal;
+                    $results[] = H::store($proposal);
                 }
 
             }

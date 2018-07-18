@@ -22,7 +22,7 @@ class ProposalHelper
      */
     public static function store($data)
     {
-        $proposal_id = DB::table('proposals')->insertGetId([
+        $proposal_id = DB::table('proposals')->insertGetId(
             [
                 'created_at'       => $data['created_at'],
                 'updated_at'       => $data['created_at'],
@@ -35,8 +35,10 @@ class ProposalHelper
                 'workers_deadline' => $data['created_at'],
                 'partner_payment'  => $data['partner_payment'],
                 'partner_notes'    => $data['partner_notes'],
-            ],
-        ]);
+                'status_id'        => 1,
+                'creator_id'       => 5,
+            ]
+        );
 
         foreach ($data['wares'] as $ware) {
             DB::table('proposal_wares')->insert([
@@ -45,7 +47,7 @@ class ProposalHelper
                 'price_per_count' => $ware['price_per_count'],
                 'count'           => $ware['count'],
                 'color'           => $ware['color'],
-                'color_price'     => $wre['color_price'],
+                'color_price'     => $ware['color_price'],
                 'created_at'      => $data['created_at'],
                 'updated_at'      => $data['created_at'],
             ]);
