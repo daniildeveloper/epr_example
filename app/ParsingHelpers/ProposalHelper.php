@@ -62,10 +62,8 @@ class ProposalHelper
     public static function allowProposal($proposalID)
     {
         // find proposal by id
-        $proposal = Proposal::findOrFail($proposalID);
-
-        // get proposal wares
-        $proposal->wares = $proposal->wares;
+        $proposal = Proposal::with('wares', 'wares.ware', 'wares.ware.packaging', 'wares.ware.framework', 'wares.ware.sticker')->findOrFail($proposalID);
+        Log::info($proposal);
 
         $proposalWaresPrice = 0; // total incomes from wares
         // set tax and partners amount
@@ -77,11 +75,7 @@ class ProposalHelper
         foreach ($proposal->wares as $proposal_ware) {
             $proposalWareSelfCost = 0;
             // calculte total incomes for this wares
-            $ware = Ware::find($proposal_ware->id);
-
-            $ware->packaging = $ware->packaging;
-            $ware->framework = $ware->framework;
-            $ware->sticker   = $ware->sticker;
+            $ware = $proposal_ware->ware;
 
             $chemieCost = $ware->framework->price * $proposal_ware->count;
             // send money to chemie price
@@ -155,6 +149,9 @@ class ProposalHelper
             Log::info('Profit from ' . $proposal->code . ' ' . $profitTotal);
             self::profitCoordinate($profitTotal, $proposal->id, $proposal->tax_type);
         }
+
+        $proposal->status_id = 3;
+        $proposal->save();
     }
 
     public static function parse_ware_name($name)
