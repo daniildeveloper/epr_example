@@ -65,7 +65,7 @@ Route::group(['prefix' => 'api'], function () {
             Route::resource('/packaging', 'Api\Stock\PackagingController');
             Route::resource('/sticker', 'Api\Stock\StickerController');
             Route::resource('/ware', 'Api\Stock\WareController');
-            Route::group(['/prefix' => 'data'], function () {
+            Route::group(['prefix' => 'data'], function () {
                 Route::get('/ware', 'Api\Stock\DataController@getWareData');
             });
 

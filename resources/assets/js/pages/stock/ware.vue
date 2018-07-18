@@ -222,6 +222,9 @@ export default {
      * @return {[type]}    [description]
      */
     async update() {
+      this.$store.dispatch('isLoading', {
+        loading: true,
+      });
       const url = 'api/stock/ware/' + this.updateForm.id
       console.log('ware_update_id', url)
       const {data} = await this.updateForm.put(url)
@@ -231,6 +234,9 @@ export default {
         text: 'Товар успешно обновлен',
         modal: false
       })
+      this.$store.dispatch('isLoading', {
+        loading: false,
+      });
     },
 
     getData() {
@@ -285,6 +291,10 @@ export default {
     deleteWare(id) {
       const url = '/api/stock/ware/' + id
 
+      this.$store.dispatch('isLoading', {
+        loading: true,
+      });
+
       axios.delete(url)
         .then(response => {
           this.getData()
@@ -293,6 +303,9 @@ export default {
             text: 'Товар успешно удален',
             modal: false
           })
+          this.$store.dispatch('isLoading', {
+            loading: false,
+          });
         })
     },
 
