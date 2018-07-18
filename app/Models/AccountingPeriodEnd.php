@@ -20,4 +20,9 @@ class AccountingPeriodEnd extends Model
     {
         return $this->hasMany('App\Models\AccountingProposal', 'accounting_id');
     }
+
+    public function accounting_period_end_details()
+    {
+        return $this->hasMany('App\Models\AccountingPeriodEndDetail', 'accounting_id');
+    }
 }
