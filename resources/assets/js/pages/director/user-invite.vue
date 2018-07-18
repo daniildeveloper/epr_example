@@ -3,7 +3,6 @@
     <v-text-field
       label="E-mail"
       v-model="form.email"
-      :error-messages="emailErrors"
       required
     ></v-text-field>
     <v-select
@@ -22,20 +21,12 @@
 </template>
 
 <script>
-import { validationMixin } from 'vuelidate'
-import { required, maxLength, email } from 'vuelidate/lib/validators'
 import Form from 'vform'
 import axios from 'axios'
 
 export default {
 
   name: 'user-invite',
-
-  mixins: [validationMixin],
-
-  validations: {
-    email: { required, email }
-  },
 
   data () {
     return {
@@ -49,17 +40,20 @@ export default {
 
   methods: {
     submit () {
-      this.$v.$touch()
+      this.$store.dispatch('setLoading', {
+        loading: true
+      });
       this.form.post('/api/user-invite')
         .then(data => {
-          console.log('user_invite_data', data)
+          this.$store.dispatch('setLoading', {
+            loading: true
+          });
           this.$emit('user-invite-completed');
           this.clear()
         })
       
     },
     clear () {
-      this.$v.$reset();
       this.form.email = '';
       this.form.role = '';
     },
@@ -68,16 +62,6 @@ export default {
       axios.get(url).then(response => {
         this.roles = response.data;
       })
-    }
-  },
-
-   computed: {
-    emailErrors () {
-      const errors = []
-      if (!this.$v.email.$dirty) return errors
-      !this.$v.email.email && errors.push('E-mail должен быть валидным')
-      !this.$v.email.required && errors.push('E-mail необходим')
-      return errors
     }
   },
   mounted() {
