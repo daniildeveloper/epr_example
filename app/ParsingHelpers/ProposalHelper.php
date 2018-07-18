@@ -138,7 +138,7 @@ class ProposalHelper
                 $tax = $this->proposalTaxManipulate($proposal->tax, $proposalWaresPrice, $proposal->id, $proposal->code);
             }
 
-            $this->partnersMoneyTransaction($partnerAmount, $proposal->id, $proposal->partner_notes);
+            self::partnersMoneyTransaction($partnerAmount, $proposal->id, $proposal->partner_notes);
 
             // send to total incomes purse
             $totalTransaction              = new MoneyTransaction();
@@ -173,5 +173,24 @@ class ProposalHelper
                 // code...
                 break;
         }
+    }
+
+    /**
+     * @param $partnerAmount
+     * @param $proposalID
+     * @param $partner_notes
+     */
+    private static function partnersMoneyTransaction(
+        $partnerAmount,
+        $proposalID,
+        $partner_notes
+    ) {
+        // partner money transaction
+        $partnerMoneyTransaction              = new MoneyTransaction();
+        $partnerMoneyTransaction->sum         = $partnerAmount;
+        $partnerMoneyTransaction->purse_to_id = Purse::where('slug', 'affialate')->first()->id;
+        $partnerMoneyTransaction->argument    = "Отчисление по партнерской программе. Заметки: " . $partner_notes;
+        $partnerMoneyTransaction->proposal_id = $proposalID;
+        $partnerMoneyTransaction->save();
     }
 }
