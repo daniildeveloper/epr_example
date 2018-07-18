@@ -2,8 +2,10 @@
 
 namespace App\ParsingHelpers;
 
+use App\Models\FoundPurse;
 use App\Models\MoneyTransaction;
 use App\Models\Packaging;
+use App\Models\ProfitCoordinator;
 use App\Models\Proposal;
 use App\Models\ProposalNotAllowedArgument as Argument;
 use App\Models\Purse;
@@ -135,7 +137,7 @@ class ProposalHelper
             $tax = 0;
 
             if ($proposal->is_with_docs === 1) {
-                $tax = $this->proposalTaxManipulate($proposal->tax, $proposalWaresPrice, $proposal->id, $proposal->code);
+                $tax = self::proposalTaxManipulate($proposal->tax, $proposalWaresPrice, $proposal->id, $proposal->code);
             }
 
             self::partnersMoneyTransaction($partnerAmount, $proposal->id, $proposal->partner_notes);
@@ -151,7 +153,7 @@ class ProposalHelper
             // calculate profit
             $profitTotal = $proposalWaresPrice - $waresSelfCost - $partnerAmount;
             Log::info('Profit from ' . $proposal->code . ' ' . $profitTotal);
-            $this->profitCoordinate($profitTotal, $proposal->id, $proposal->tax_type);
+            self::profitCoordinate($profitTotal, $proposal->id, $proposal->tax_type);
         }
     }
 
@@ -200,5 +202,119 @@ class ProposalHelper
         $partnerMoneyTransaction->argument    = "Отчисление по партнерской программе. Заметки: " . $partner_notes;
         $partnerMoneyTransaction->proposal_id = $proposalID;
         $partnerMoneyTransaction->save();
+    }
+
+    /**
+     * Coordinate profit.
+     * @param  [type] $profit [description]
+     * @return [type]         [description]
+     */
+    private static function profitCoordinate(
+        $profit,
+        $proposalID,
+        $taxType = 1
+    ) {
+        $proposal = Proposal::findOrFail($proposalID)->first()->id;
+
+        // if tax_type is for "ТОО" => get fromn tax procents
+        if ($taxType === 2) {
+            $profitTax = ($profit * 5) / 100;
+
+            $profit -= $profitTax;
+
+            $mt              = new MoneyTransaction();
+            $mt->sum         = $profitTax;
+            $mt->argument    = "Налог (5%)";
+            $mt->purse_to_id = Purse::where('slug', 'system_tax')->first()->id;
+            $mt->proposal_id = $proposalID;
+            $mt->save();
+        }
+
+        // получаем распределение прибыли
+        $pc = ProfitCoordinator::first();
+
+        // Вычисляем прибыль для распределения
+        $workersProfit = (($profit * $pc->workers_profit) / 100);
+        Log::info('Workers profit ' . $workersProfit);
+        $salersProfit = $profit - $workersProfit;
+        Log::info('Salers profit ' . $salersProfit);
+
+        // send to workers profits
+        $workersProfitTransaction              = new MoneyTransaction();
+        $workersProfitTransaction->purse_to_id = Purse::where('slug', 'workers_profit_purse')->first()->id;
+        $workersProfitTransaction->sum         = $workersProfit;
+        $workersProfitTransaction->proposal_id = $proposalID;
+        $workersProfitTransaction->argument    = "Прибыль цеха с заявки #$proposalID";
+        $workersProfitTransaction->save();
+
+        // send to salers Profit
+        $salersProfitTransaction              = new MoneyTransaction();
+        $salersProfitTransaction->purse_to_id = Purse::where('slug', 'salers_profit_purse')->first()->id;
+        $salersProfitTransaction->sum         = $salersProfit;
+        $salersProfitTransaction->proposal_id = $proposalID;
+        $salersProfitTransaction->argument    = "Прибыль с заявки #$proposalID";
+        $salersProfitTransaction->save();
+
+        // get all open funds
+        $funds = Purse::where(function ($query) {
+            $query->where('category_id', 3)
+                ->where('open', true);
+        })->get();
+
+        // if funds opens exists, then send money
+        if (count($funds) > 0) {
+            Log::info('Отправка денег на кошелек-fund');
+            foreach ($funds as $fund) {
+                $fundInfo = FoundPurse::where('purse_id', $fund->id)->first(); // purse fund where to send money
+
+                // calculate procents to send
+                $workersFundProcent = ($workersProfit * $fundInfo->profit_procent) / 100;
+                $salersFundProcent  = ($salersProfit * $fundInfo->profit_procent) / 100;
+
+                // trnsaction to send procents to funds
+                $workersFundProcentTransaction                = new MoneyTransaction();
+                $workersFundProcentTransaction->purse_from_id = Purse::where('slug', 'workers_profit_purse')->first()->id;
+                $workersFundProcentTransaction->sum           = $workersFundProcent;
+                $workersFundProcentTransaction->argument      = 'Перечисление денег в фонд ' . $fund->name;
+                $workersFundProcentTransaction->purse_to_id   = $fund->id;
+                $workersFundProcentTransaction->proposal_id   = $proposalID;
+                $workersFundProcentTransaction->save();
+
+                $salersFundProcentTransaction                = new MoneyTransaction();
+                $salersFundProcentTransaction->purse_from_id = Purse::where('slug', 'salers_profit_purse')->first()->id;
+                $salersFundProcentTransaction->sum           = $salersFundProcent;
+                $salersFundProcentTransaction->argument      = 'Перечисление денег в фонд ' . $fund->name;
+                $salersFundProcentTransaction->purse_to_id   = $fund->id;
+                $salersFundProcentTransaction->proposal_id   = $proposalID;
+                $salersFundProcentTransaction->save();
+            }
+        }
+    }
+
+    /**
+     * @param $taxProcent
+     * @param $totalAmount
+     * @param $proposalID
+     * @param $proposalCode
+     * @return mixed
+     */
+    private static function proposalTaxManipulate(
+        $taxProcent,
+        $totalAmount,
+        $proposalID,
+        $proposalCode
+    ) {
+        // calculate tax
+        $sum = ($totalAmount * $taxProcent) / 100;
+        Log::info("Tax: total amount = $totalAmount. taxProcent = $taxProcent. Tax total = $sum. proposalID $proposalID");
+
+        $taxTransaction              = new MoneyTransaction();
+        $taxTransaction->purse_to_id = Purse::where('slug', 'system_tax')->first()->id;
+        $taxTransaction->proposal_id = $proposalID;
+        $taxTransaction->sum         = $sum;
+        $taxTransaction->argument    = "НДС($taxProcent) по заявке $proposalCode";
+        $taxTransaction->save();
+
+        return $sum;
     }
 }

@@ -113,8 +113,13 @@ class ImportCommandSetup extends Command
                 $this->line("[$key] => $value");
             }
 
-            $proposals = $this->line('Parsing document $file...');
-            $this->parse_items($file, $columns);
+            $this->line('Parsing document $file...');
+            $proposals = $this->parse_items($file, $columns);
+
+            foreach ($proposals as $proposal) {
+                $this->line('Allowing proposal #' . $proposal);
+                H::allowProposal($proposal);
+            }
         }
 
         // 2. Вызов сущности модели
