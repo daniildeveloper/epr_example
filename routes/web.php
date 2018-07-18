@@ -123,6 +123,7 @@ Route::group(['prefix' => 'api'], function () {
             });
 
             Route::group(['prefix' => 'accounting'], function () {
+                Route::get('/', 'Api\Finances\AccountingEditController@index');
                 Route::post('/store', 'Api\Finances\PurseController@endAccountingPeriod');
                 Route::get('/history-data', 'Api\Finances\AccountingEditController@historyData');
                 Route::group(['middleware' => 'permission:show_stock_privats'], function () {

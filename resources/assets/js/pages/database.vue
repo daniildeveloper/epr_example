@@ -119,7 +119,7 @@
 
     <!-- accounting periods -->
     <v-tabs-content :id="'accountings'" v-if="hasPermission('finances')">
-      <!-- <history-data-view></history-data-view> -->
+      <accountings-list/>
     </v-tabs-content>
     <!-- end accounting periods -->
 
@@ -147,6 +147,7 @@ import Stickers from '~/pages/stock/stickers'
 import Search from '~/pages/search'
 import Proposals from '~/pages/proposal/proposals-list'
 import AccountingPeriodsEnd from '~/pages/accounting/history-data'
+import AccountingsList from '~/pages/accounting/accounting-lists';;
 
 /**
  * На странице отображаются текущие остатки по складу
@@ -164,6 +165,7 @@ export default {
     'search-view': Search,
     'proposals-list-view': Proposals,
     'history-data-view': AccountingPeriodsEnd,
+    AccountingsList,
   },
 
   computed: mapGetters({

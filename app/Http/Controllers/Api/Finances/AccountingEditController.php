@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Api\Finances;
 
+use App\Http\Controllers\Controller;
 use App\Models\AccountingDataHistory;
 use App\Models\AccountingPeriodEnd;
-use App\Models\Purse;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class AccountingEditController extends Controller
 {
@@ -16,17 +15,7 @@ class AccountingEditController extends Controller
     public function index(Request $request)
     {
         // 1. Берем все отчетные периоды и и пагинация по 5
-        $accountingPeriods = AccountingPeriodEnd::orderBy('id', 'desc')->paginate(5);
-
-        // 2. Идем по отчетным периодам и вытаскивае заявки, закрытые за отчтные период, товары и транзакции
-        foreach ($accountingPeriods as $period) {
-            $period->accountingProposals = $period->accountingProposals;
-
-            foreach ($period->accountingProposals as $proposal) {
-                $proposal->transactions = $proposal->transactions;
-                $proposal->wares        = $proposal->wares;
-            }
-        }
+        $accountingPeriods = AccountingPeriodEnd::with('accounting_period_end_details')->orderBy('id', 'desc')->paginate(5);
 
         // 3. Возвращаем результаты
         return response()->json($accountingPeriods, 200);
@@ -43,5 +32,4 @@ class AccountingEditController extends Controller
         return response()->json($accountingPeriods, 200);
     }
 
-    
 }
