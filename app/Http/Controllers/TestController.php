@@ -3,41 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Inventory;
-use App\Models\Packaging;
-use App\Models\RestFramework;
-use App\Models\Sticker;
+use App\Models\AccountingPeriodEnd;
+use App\Models\AccountingPeriodEndDetail;
 use Illuminate\Http\Request;
 
 class TestController extends Controller
 {
     public function test(Request $request)
     {
-        $is = Inventory::with('answered')->orderBy('id', 'desc')->paginate(40);
+        // 1. Берем все отчетные периоды и и пагинация по 5
+        $accountingPeriods = AccountingPeriodEnd::with('accounting_period_end_details')->orderBy('id', 'desc')->paginate(5);
 
-        $types = [
-            [
-                'slug' => 'Основы',
-                'name' => 'rest_frameworks',
-            ], [
-                'slug' => 'Наклейки',
-                'name' => 'stickers',
-            ], [
-                'slug' => 'Упаковки',
-                'name' => 'packagings',
-            ],
-        ];
+        foreach ($accountingPeriods as $period) {
+            $details = AccountingPeriodEndDetail::where('accounting_id', $period->id)->get();
 
-        $components = [
-            'rest_frameworks' => RestFramework::all(),
-            'packagings'      => Packaging::all(),
-            'stickers'        => Sticker::all(),
-        ];
+            $period_details = [
+            ];
 
-        return response()->json([
-            'inventories' => $is,
-            'types'       => $types,
-            'components'  => $components,
-        ], 200);
+            foreach ($details as $detail) {
+                $period_details[$detail->detail_key] = $detail->detail_value;
+            }
+            $period->details = $period_details;
+        }
+        dd($accountingPeriods);
+        // 3. Возвращаем результаты
+        return response()->json($accountingPeriods, 200);
     }
 }

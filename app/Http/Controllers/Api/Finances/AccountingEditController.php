@@ -22,8 +22,12 @@ class AccountingEditController extends Controller
             $details = AccountingPeriodEndDetail::where('accounting_id', $period->id)->get();
 
             $period_details = [
-                ''
             ];
+
+            foreach ($details as $detail) {
+                $period_details[$detail->detail_key] = $detail->detail_value;
+            }
+            $period->details = $period_details;
         }
 
         // 3. Возвращаем результаты
