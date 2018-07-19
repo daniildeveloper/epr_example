@@ -13,8 +13,8 @@
 
     <v-layout row wrap>
       <v-flex xs12>
-        <v-btn @click="getData()">Все заявки</v-btn>
-        <v-btn v-for="sortable in sortables" @click="sort(sortable.slug)" :key="sortable.slug" :data="sortable">{{sortable.name}}</v-btn>
+        <v-btn small @click="getData()">Все заявки</v-btn>
+        <v-btn small v-for="sortable in sortables" @click="sort(sortable.slug)" :key="sortable.slug" :data="sortable">{{sortable.name}}</v-btn>
       </v-flex>
 
       <v-flex xs12>
