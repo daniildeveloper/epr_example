@@ -217,7 +217,7 @@ class ImportCommandSetup extends Command
                         'created_at'       => $last_date,
                         'object'           => '',
                         'is_with_docs'     => $first_line_index === 'БЕЗ НДС' ? false : true,
-                        'tax'              => '',
+                        'tax'              => $first_line_index === 'БЕЗ НДС' ? 0 : 12,
                         'client_deadline'  => $last_date,
                         'workers_deadline' => $last_date,
                         'partner_payment'  => $record[$columns[$this->columns['partner'][0]]],
