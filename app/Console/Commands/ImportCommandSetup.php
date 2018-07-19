@@ -82,6 +82,7 @@ class ImportCommandSetup extends Command
     protected $files = [
         './storage/app/public/2.csv',
         // './storage/app/public/3.csv',
+        './storage/app/public/4.csv',
     ];
     /**
      * Create a new command instance.
@@ -101,12 +102,11 @@ class ImportCommandSetup extends Command
     public function handle()
     {
         // 1. Распознование колонок
-        $this->line('Show columns...');
+        $this->info('Parser begin ...');
 
         foreach ($this->files as $file) {
             $columns = $this->columns_setup($file);
 
-            Log::info('Show columns ...');
             Log::info($columns);
 
             $this->line('Columns...');
@@ -163,7 +163,6 @@ class ImportCommandSetup extends Command
             foreach ($record as $k => $value) {
                 $this->line("[$k] => $value");
                 if (in_array(trim($value), $expected_columns_names)) {
-                    // $columns[$value] = array_search($value, $expected_columns_names);
                     $columns[$value] = $k;
                 }
             }
@@ -189,6 +188,7 @@ class ImportCommandSetup extends Command
             $first_element = 0;
 
             while ($record[$first_element] === '') {
+                $this->line('$first_element' . $first_element);
                 $first_element++;
 
                 // TODO: check for overrides and typos
@@ -201,7 +201,16 @@ class ImportCommandSetup extends Command
                 $this->line('Proposal client ' . $record[$columns[$this->columns['client'][0]]]);
 
                 if ($record[$columns[$this->columns['client'][0]]] != $this->columns['client'][0] && $record[$columns[$this->columns['client'][0]]] != '') {
-                    $date = str_replace(',', '-', $record[1]);
+
+                    // replace date strings t parse correctly
+                    if (strpos($record[1], ',') !== false) {
+                        $date = str_replace(',', '-', $record[1]);
+                    }
+
+                    if (strpos($record[1], '/') !== false) {
+                        $date = str_replace('/', '-', $record[1]);
+                    }
+                    //
 
                     if ($date != '') {
                         $date = date('Y-m-d H:m:s', Carbon::parse($date)->timestamp);
