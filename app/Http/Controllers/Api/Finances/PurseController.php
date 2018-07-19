@@ -424,20 +424,32 @@ class PurseController extends Controller
         $packaging_detail                = new AccountingPeriodEndDetail();
         $packaging_detail->accounting_id = $accounting->id;
         $packaging_detail->detail_value  = $accounting_period_packagings_total;
-        $packaging_detail->detail_key           = 'packaging_detail';
+        $packaging_detail->detail_key    = 'packaging_detail';
         $packaging_detail->save();
 
         $sticker_detail                = new AccountingPeriodEndDetail();
         $sticker_detail->accounting_id = $accounting->id;
         $sticker_detail->detail_value  = $accounting_period_stickers_total;
-        $sticker_detail->detail_key           = 'sticker_detail';
+        $sticker_detail->detail_key    = 'sticker_detail';
         $sticker_detail->save();
 
         $rest_framework_detail                = new AccountingPeriodEndDetail();
         $rest_framework_detail->accounting_id = $accounting->id;
         $rest_framework_detail->detail_value  = $accounting_period_frameworks_total;
-        $rest_framework_detail->detail_key           = 'rest_framework_detail';
+        $rest_framework_detail->detail_key    = 'rest_framework_detail';
         $rest_framework_detail->save();
+
+        $worker_incomes_detail                = new AccountingPeriodEndDetail();
+        $worker_incomes_detail->accounting_id = $accounting->id;
+        $worker_incomes_detail->detail_value  = $workersTotalIncomes;
+        $worker_incomes_detail->detail_key    = 'workers_incomes';
+        $worker_incomes_detail->save();
+
+        $salers_incomes_detail                = new AccountingPeriodEndDetail();
+        $salers_incomes_detail->accounting_id = $accounting->id;
+        $salers_incomes_detail->detail_value  = $salersTotalIncomes;
+        $salers_incomes_detail->detail_key    = 'salers_incomes';
+        $salers_incomes_detail->save();
 
         return response()->json([
             'accounting'      => $accounting,
