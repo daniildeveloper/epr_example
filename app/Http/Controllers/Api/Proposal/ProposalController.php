@@ -1051,7 +1051,6 @@ class ProposalController extends Controller
      *     * unallowed
      *     * hot
      *     * warranty cases
-     *     *
      */
     public function sort(Request $request, $sort_type)
     {

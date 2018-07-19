@@ -158,8 +158,9 @@ Route::group(['prefix' => 'api'], function () {
                 Route::get('/paginate', 'Api\Proposal\ProposalController@proposalPaginate');
                 Route::post('/change-status', 'Api\Proposal\ProposalController@changeProposalStatus'); // this route has very many permissions check, stored to the controller
                 Route::post('/change-deadline', 'Api\Proposal\ProposalController@changeProposalDeadline');
-                Route::resource('argument', 'Api\Proposal\Proposal\NotAllowedArgumentController');
-                Route::get('/argument/find/{proposal_id}', 'Api\Proposal\Proposal\NotAllowedArgumentController@find');
+                Route::resource('argument', 'Api\Proposal\NotAllowedArgumentController');
+                Route::get('/argument/find/{proposal_id}', 'Api\Proposal\NotAllowedArgumentController@find');
+                Route::get('/sort/{sort_type}', 'Api\Proposal\ProposalController@sort');
             });
         });
 
