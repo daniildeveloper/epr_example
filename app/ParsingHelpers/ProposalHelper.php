@@ -149,7 +149,7 @@ class ProposalHelper
             $totalTransaction->save();
 
             // calculate profit
-            $profitTotal = $proposalWaresPrice - $waresSelfCost - $partnerAmount;
+            $profitTotal = $proposalWaresPrice - $waresSelfCost;
             Log::info('Profit from ' . $proposal->code . ' ' . $profitTotal);
             self::profitCoordinate($profitTotal, $proposal->id, $proposal->tax_type);
         }

@@ -75,6 +75,9 @@ class ImportCommandSetup extends Command
         'clean_sum'         => [
             'Сумма очищенная',
         ],
+        'bonus'             => [
+            'бонус',
+        ],
     ];
 
     protected $types = ['БЕЗ НДС', 'С НДС'];
@@ -217,6 +220,19 @@ class ImportCommandSetup extends Command
                         $this->line($date);
                         $last_date = $date;
                     }
+                    // calculate partner payment
+                    $partner_payment = 0;
+                    $partner_notes   = '';
+
+                    if ($record[$columns[$this->columns['partner'][0]]] != '') {
+                        $partner_payment += (int) $record[$columns[$this->columns['partner'][0]]];
+                        $partner_notes .= 'Откат: ' . $record[$columns[$this->columns['partner'][0]]];
+                    }
+
+                    if ($record[$columns[$this->columns['bonus'][0]]]) {
+                        $partner_payment += (int) $record[$columns[$this->columns['bonus'][0]]];
+                        $partner_notes .= 'бонус ' . $record[$columns[$this->columns['bonus'][0]]];
+                    }
 
                     $this->line("Date created at $date");
                     $this->line('Тип налога ' . $first_line_index);
@@ -229,8 +245,8 @@ class ImportCommandSetup extends Command
                         'tax'              => $first_line_index === 'БЕЗ НДС' ? 0 : 12,
                         'client_deadline'  => $last_date,
                         'workers_deadline' => $last_date,
-                        'partner_payment'  => $record[$columns[$this->columns['partner'][0]]],
-                        'partner_notes'    => '',
+                        'partner_payment'  => $partner_payment,
+                        'partner_notes'    => $partner_notes,
                         'wares'            => [],
                     ];
 
