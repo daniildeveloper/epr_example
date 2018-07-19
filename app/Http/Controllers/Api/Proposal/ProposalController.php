@@ -785,10 +785,10 @@ class ProposalController extends Controller
      */
     public function proposalPaginate(Request $request)
     {
-        $proposals = Proposal::paginate(30);
+        $proposals = Proposal::where('status_id', '<=', 8)->orderBy('id', 'desc')->paginate(30);
 
         foreach ($proposals as $proposal) {
-            $proposal->wares  = ProposalWare::where('proposal_id', $proposal->id)->get();
+            $proposal->wares  = ProposalWare::where('proposal_id', $proposal->id)->orderBy('id', 'desc')->get();
             $proposal->client = $proposal->client;
             if ($proposal->object_id != null) {
                 $proposal->object = $proposal->object;
