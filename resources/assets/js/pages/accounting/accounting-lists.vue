@@ -16,15 +16,15 @@
       <template slot="expand" slot-scope="props">
         <v-card flat>
           <headline>Сводка по отчетному периоду на {{props.item.created_at}}</headline>
-          <v-subheader>Себестоимость по химии:</v-subheader>
-          <v-subheader>Себестимость по упаковке:</v-subheader>
-          <v-subheader>Себестимость по наклейке:</v-subheader>
+          <v-subheader>Себестоимость по химии: {{props.item.details.rest_framework_detail}}</v-subheader>
+          <v-subheader>Себестимость по упаковке: {{props.item.details.packaging_detail}}</v-subheader>
+          <v-subheader>Себестимость по наклейке: {{props.item.details.sticker_detail}}</v-subheader>
 
           <br>
 
-          <v-subheader>Прибыль общая: </v-subheader>
-          <v-subheader>Прибыль офиса: </v-subheader>
-          <v-subheader>Прибыль цеха: </v-subheader>
+          <v-subheader>Прибыль общая: {{parseInt(props.item.details.workers_incomes) + parseInt(props.item.details.salers_incomes)}}</v-subheader>
+          <v-subheader>Прибыль офиса: {{props.item.details.salers_incomes}}</v-subheader>
+          <v-subheader>Прибыль цеха: {{props.item.details.workers_incomes}}</v-subheader>
         </v-card>
       </template>
     </v-data-table>

@@ -495,10 +495,23 @@ class ProposalHelper
         $rest_framework_detail->detail_value  = $accounting_period_frameworks_total;
         $rest_framework_detail->detail_key    = 'rest_framework_detail';
         $rest_framework_detail->save();
+
+        $worker_incomes_detail                = new AccountingPeriodEndDetail();
+        $worker_incomes_detail->accounting_id = $accounting->id;
+        $worker_incomes_detail->detail_value  = $workersTotalIncomes;
+        $worker_incomes_detail->detail_key    = 'workers_incomes';
+        $worker_incomes_detail->save();
+
+        $salers_incomes_detail                = new AccountingPeriodEndDetail();
+        $salers_incomes_detail->accounting_id = $accounting->id;
+        $salers_incomes_detail->detail_value  = $salersTotalIncomes;
+        $salers_incomes_detail->detail_key    = 'salers_incomes';
+        $salers_incomes_detail->save();
     }
 
-    public static function closeProposalSuccessFly($proposal_id) {
-        $proposal = Proposal::find($proposal_id);
+    public static function closeProposalSuccessFly($proposal_id)
+    {
+        $proposal            = Proposal::find($proposal_id);
         $proposal->status_id = 8;
         $proposal->save();
     }

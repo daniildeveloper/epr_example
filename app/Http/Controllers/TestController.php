@@ -25,7 +25,7 @@ class TestController extends Controller
             }
             $period->details = $period_details;
         }
-        dd($accountingPeriods);
+        // dd($accountingPeriods);
         // 3. Возвращаем результаты
         return response()->json($accountingPeriods, 200);
     }
