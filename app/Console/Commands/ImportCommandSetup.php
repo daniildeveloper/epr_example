@@ -17,7 +17,6 @@ class ImportCommandSetup extends Command
      * @var string
      */
     protected $signature = 'integro:import';
-    // protected $signature = 'integro:import';
 
     /**
      * The console command description.
@@ -85,7 +84,7 @@ class ImportCommandSetup extends Command
     protected $files = [
         './storage/app/public/2.csv',
         // './storage/app/public/3.csv',
-        './storage/app/public/4.csv',
+        // './storage/app/public/4.csv',
     ];
     /**
      * Create a new command instance.
@@ -126,15 +125,10 @@ class ImportCommandSetup extends Command
                 H::closeProposalSuccessFly($proposal);
             }
 
-            $this->info('Closing accounting period for file ' . $file);
-            H::endAccountingPeriod($proposals);
+            // $this->info('Closing accounting period for file ' . $file);
+            // H::endAccountingPeriod($proposals);
 
         }
-
-        // 2. Вызов сущности модели
-        // 3. Генерация поставок
-        // 4. калькуляция остатков
-        // 6. Ввод товаров
     }
 
     private function columns_setup($file_path)
