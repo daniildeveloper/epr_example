@@ -40,7 +40,7 @@
                 ></v-checkbox> -->
               </th>
               <th v-for="header in props.headers" :key="header.text"
-                :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                :class="['column sortable']"
                 @click="changeSort(header.value)"
               >
                 <v-icon>arrow_upward</v-icon>
@@ -102,10 +102,6 @@ export default {
 
       unclosedProposalsUrl: '/api/purse/accounting/finances/unclosed-proposals', // unclosed proposals
       newAccountingDialog: false,
-
-      pagination: {
-        sortBy: 'name'
-      },
       selected: [],
       headers: [
         { text: '#', value: 'id' },
