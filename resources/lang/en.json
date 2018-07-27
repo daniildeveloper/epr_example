@@ -31,5 +31,38 @@
   "password_updated": "Пароль обновлен",
   "new_password": "Новый пароль",
   "password_length_hint": "Минимум 8 знаков(букав, цифр, точек)",
-  "nav_menu_title": "Меню приложения"
+  "nav_menu_title": "Меню приложения",
+
+  "names": {
+    "frameworks": "Основы",
+    "packagings": "Упаковки",
+    "stickers": "Наклейки",
+    "finances": "Финансы",
+    "data_base": "База данных",
+    "manufactory": "Цех",
+    "proposals": "Заявки",
+    "transactions": "Транзакции",
+    "actions": "Действия",
+    "chat": "Чат"
+  },
+
+  "buttons": {
+    "main": {
+      "user_invite": {
+        "title": ""
+      },
+      "new_proposal": {
+        "title": "Новая заявка"
+      },
+      "workers_calendar": {
+        "title": "Календарь производства"
+      },
+      "supplies": {
+        "title": "Поставки"
+      },
+      "wares_and_chemie": {
+        "title": "Товары и химии"
+      }
+    }
+  }
 }
