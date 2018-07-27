@@ -20,5 +20,6 @@ class DatabaseSeeder extends Seeder
         $this->call(DemoAccountingTableSeeder::class);
         $this->call(ProposalStatusTableSeeder::class);
         $this->call(InventoryTableSeeder::class);
+        $this->call(CleanFrameworkTableSeeder::class);
     }
 }

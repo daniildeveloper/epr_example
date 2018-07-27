@@ -15,7 +15,8 @@ class CreateCleanFrameworkToRestFrameworksTable extends Migration
     {
         Schema::create('clean_framework_to_rest_frameworks', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('clean_framework');
+            $table->integer('clean_framework_id');
+            $table->integer('rest_framework_id');
             $table->integer('count')->default(1);
             $table->timestamps();
         });
