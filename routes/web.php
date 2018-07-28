@@ -55,6 +55,15 @@ Route::group(['prefix' => 'api'], function () {
         Route::group(['prefix' => 'manufactory'], function () {
             Route::group(['prefix' => 'watch', 'middleware' => 'permission:watch_managment'], function () {
                 Route::get('/watchers', 'Api\Manufactory\WatchController@getWatchers');
+                Route::post('/watcher-watches/{watcher_id}', 'Api\Manufactory\WatchController@getWatchesByWatcher');
+                Route::post('/', 'Api\Manufactory\WatchController@store');
+
+                // money
+                Route::post('add-money', 'Api\Manufactory\WatchController@addMoney');
+                Route::post('minus-money', 'Api\Manufactory\WatchController@decreaseMoney');
+
+                Route::get('my', 'Api\Manufactory\WatchController@getMyWatches');
+
             });
         });
 

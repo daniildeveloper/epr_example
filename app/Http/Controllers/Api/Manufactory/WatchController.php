@@ -13,6 +13,7 @@ class WatchController extends Controller
     /**
      * @api {GET} /api/manufactory/watch/watchers GetManufactoryWatchers
      * @apiGroup Manufactory
+     * @apiVersion 0.0.1
      */
     public function getWatchers(Request $request)
     {
@@ -28,18 +29,20 @@ class WatchController extends Controller
         return response()->json($watchers, 200);
     }
 
-    public function getWatchesByWatcher(Request $request)
+    /**
+     * @api {GET} /api//manufactory/watch/watcher-watches/:watcher_id GetWatchersWatches
+     */
+    public function getWatchesByWatcher(Request $request, $watcher_id)
     {
-        $watcher_id = $request->user_id;
         $watches    = Watch::where('watcher_id', $watcher_id)->limit(20)->with('watcher', 'watch_money_transactions')->get();
 
         return response()->json($watches, 200);
     }
 
     /**
-     * Show watches list
-     * @param  Request $request [description]
-     * @return [type]           [description]
+     * @api {POST} /api/manufactory/watch StoreWatch
+     * @apiGroup Manufactory
+     * @apiVersion 0.0.1
      */
     public function store(Request $request)
     {
@@ -96,6 +99,11 @@ class WatchController extends Controller
         return $payment;
     }
 
+    /**
+     * @api {GET} /api/manufactory/watch/my GetMyWatches
+     * @apiVersion 0.0.1
+     * @apiGroup Manufactory 
+     */
     public function getMyWatches(Request $request)
     {
         $user = JWTAuth::toUser($request->header('Authorization'));
