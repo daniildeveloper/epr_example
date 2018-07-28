@@ -84,7 +84,8 @@ class UsersTableSeeder extends Seeder
             ['name' => 'hide_wares', 'description' => 'Скрывать товары'],
             ['name' => 'show_stock_info', 'description' => 'Просмотр товарных номенклатур'],
             ['name' => 'end_accounting_period', 'description' => 'Завершать отчетный период'],
-            ['name' => 'manufactory', 'description' => 'Цех']
+            ['name' => 'manufactory', 'description' => 'Цех'],
+            ['name' => 'watch_managment', 'description' => 'Управение вахтами'],
         ];
 
         foreach ($permissions as $p) {

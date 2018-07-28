@@ -51,6 +51,13 @@ Route::group(['prefix' => 'api'], function () {
      */
 
     Route::group(['middleware' => 'jwt'], function () {
+
+        Route::group(['prefix' => 'manufactory'], function () {
+            Route::group(['prefix' => 'watch', 'middleware' => 'permission:watch_managment'], function () {
+                Route::get('/watchers', 'Api\Manufactory\WatchController@getWatchers');
+            });
+        });
+
         Route::post('search', 'Api\GlobalSearchController@search'); // to global search we have everyone an access
         // Open apii. EveryOne access
         Route::group(['prefix' => 'open'], function () {

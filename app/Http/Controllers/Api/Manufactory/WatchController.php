@@ -11,7 +11,7 @@ use JWTAuth;
 class WatchController extends Controller
 {
     /**
-     * @api {GET} /api/manufactory/watchers GetManufactoryWatchers
+     * @api {GET} /api/manufactory/watch/watchers GetManufactoryWatchers
      * @apiGroup Manufactory
      */
     public function getWatchers(Request $request)
