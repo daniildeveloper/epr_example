@@ -17,7 +17,7 @@
                 </v-menu>
               </v-card-title>
               <v-card-text>
-                
+                <watch-dialog/>
               </v-card-text>
             <v-card-actions>
               <v-btn color="primary" flat @click.stop="newWatchDialog=false">Закрыть</v-btn>
@@ -90,12 +90,18 @@
 <script>
 import axios from 'axios';
 
+import WatchDialog from '~/pages/watch/WatchDialog';
+
 /**
  * Tabled component with watches
  */
 export default {
 
   name: 'WatchesIndex',
+
+  components: {
+    WatchDialog,
+  },
 
   data () {
     return {

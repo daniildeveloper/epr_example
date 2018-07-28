@@ -3,7 +3,7 @@
         <!-- first row wirh buttons -->
         <v-layout row justify-start wrap>
             <v-flex>
-                <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition" :overlay="false">
+                <v-dialog v-model="watchDialog" fullscreen transition="dialog-bottom-transition" :overlay="false">
                   <v-btn color="primary" dark slot="activator">Вахты</v-btn>
                   <v-card>
                     <v-toolbar dark color="primary">
@@ -16,6 +16,10 @@
                       </v-toolbar-items>
                     </v-toolbar>
                     <!-- here must goes watches -->
+
+                    <div>
+                      <watches-index/>
+                    </div>
                   </v-card>
                 </v-dialog>
             </v-flex>
@@ -35,6 +39,7 @@ import axios from 'axios';
 
 import Inventories from '~/pages/stock/inventory/inventories-list';
 import NewInventory from '~/pages/stock/inventory/new-inventory';
+import WatchesIndex from '~/pages/watch/WatchesIndex';
 
 /**
  * Component to show all pages
@@ -50,6 +55,7 @@ export default {
   components: {
     Inventories,
     NewInventory,
+    WatchesIndex,
   },
 
   metaInfo () {
