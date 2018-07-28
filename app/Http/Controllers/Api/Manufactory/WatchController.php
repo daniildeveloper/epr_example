@@ -34,7 +34,11 @@ class WatchController extends Controller
      */
     public function getWatchesByWatcher(Request $request, $watcher_id)
     {
-        $watches    = Watch::where('watcher_id', $watcher_id)->limit(20)->with('watcher', 'watch_money_transactions')->get();
+        $watches = Watch::where('watcher_id', $watcher_id)
+            ->limit(20)
+            ->with('watcher', 'watch_money_transactions')
+            ->orderBy('id', 'desc')
+            ->get();
 
         return response()->json($watches, 200);
     }
@@ -102,7 +106,7 @@ class WatchController extends Controller
     /**
      * @api {GET} /api/manufactory/watch/my GetMyWatches
      * @apiVersion 0.0.1
-     * @apiGroup Manufactory 
+     * @apiGroup Manufactory
      */
     public function getMyWatches(Request $request)
     {

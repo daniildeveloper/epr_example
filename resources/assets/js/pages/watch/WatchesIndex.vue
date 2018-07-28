@@ -2,28 +2,46 @@
     <v-container grid-list-xl>
     <v-layout column>
       <v-flex>
-        <v-btn color="primary" dark @click.stop="newWatchDialog = true">Новая вахта</v-btn>
-          <v-dialog v-model="newWatchDialog" max-width="500px">
-            <v-card>
-              <v-card-title>
-                <span>
-                  Новая вахта
-                </span>
-                <v-spacer></v-spacer>
-                <v-menu bottom left>
-                  <v-btn @click="newWatchDialog = false" icon slot="activator">
-                    <v-icon>close</v-icon>
-                  </v-btn>
-                </v-menu>
-              </v-card-title>
-              <v-card-text>
-                <watch-dialog/>
-              </v-card-text>
-            <v-card-actions>
-              <v-btn color="primary" flat @click.stop="newWatchDialog=false">Закрыть</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
+        <v-layout row wrap>
+          <v-flex xs2>
+            <v-btn color="primary" dark @click.stop="newWatchDialog = true">Новая вахта</v-btn>
+            <v-dialog v-model="newWatchDialog" max-width="500px">
+              <v-card>
+                <v-card-title>
+                  <span>
+                    Новая вахта
+                  </span>
+                  <v-spacer></v-spacer>
+                  <v-menu bottom left>
+                    <v-btn @click="newWatchDialog = false" icon slot="activator">
+                      <v-icon>close</v-icon>
+                    </v-btn>
+                  </v-menu>
+                </v-card-title>
+                <v-card-text>
+                  <watch-dialog/>
+                </v-card-text>
+              <v-card-actions>
+                <v-btn color="primary" flat @click.stop="newWatchDialog=false">Закрыть</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-flex>
+          <v-flex xs4>
+            <v-select
+              autocomplete
+              label="Выбор рабочего"
+              v-model="watcher"
+              placeholder="Выбрать рабочего"
+              :items="watchers"
+              item-text="name"
+              item-value="id"
+              required
+            ></v-select>
+          </v-flex>
+        </v-layout>
+        
+          
       </v-flex>
 
       <v-flex>
@@ -121,6 +139,9 @@ export default {
         ],
         busy: false,
         items: [],
+
+        watchers: [],
+        watcher: null,
     }
   },
 
@@ -130,7 +151,15 @@ export default {
             .then(response => {
                 this.items = response.data.data;
             })
-    }
+    },
+
+    getWatchers() {
+      axios.get('/api/manufactory/watch/watchers')
+        .then(response => {
+          this.watchers = response.data;
+        })
+    },
+
   }
 }
 </script>
