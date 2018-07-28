@@ -163,19 +163,28 @@ class ProposalHelper
         $id = 1;
         switch ($name) {
             case 'ДЗ':
-                $id = 1;
+                $id = 2;
                 break;
             case 'СТС':
-                $id = 1;
+                $id = 3;
                 break;
             case 'ПР':
                 $id = 1;
                 break;
             case 'СТЖ':
-                $id = 1;
+                $id = 4;
                 break;
             case 'мрамор':
                 $id = 1;
+                break;
+            case 'СТ':
+                $id = 4;
+                break;
+            case 'МРС':
+                $id = 10;
+                break;
+            case 'ЭК':
+                $id = 4;
                 break;
 
             default:

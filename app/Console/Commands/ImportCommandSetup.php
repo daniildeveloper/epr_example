@@ -62,7 +62,7 @@ class ImportCommandSetup extends Command
         'ware_skotch_width' => [
             'Толщина',
         ],
-        'self_cost'         => [
+        'additional_cost'         => [
             'Сумма за г.п.э.с.',
         ],
         'sum'               => [
