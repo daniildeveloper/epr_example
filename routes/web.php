@@ -148,7 +148,6 @@ Route::group(['prefix' => 'api'], function () {
             Route::group(['prefix' => 'data'], function () {
                 Route::get('creation', 'Api\Proposal\DataController@getProposalCreationData');
                 Route::get('client/search{query?}', 'Api\Proposal\DataController@searchClients');
-                Route::get('object/search{query?}{client_id?}', 'Proposal\DataController@searchObjects');
                 Route::get('/stages', 'Api\Proposal\DataController@getStatusesList');
                 Route::get('tax', 'Api\Proposal\DataController@getTaxData');
             });
@@ -158,8 +157,8 @@ Route::group(['prefix' => 'api'], function () {
                 Route::get('/paginate', 'Api\Proposal\ProposalController@proposalPaginate');
                 Route::post('/change-status', 'Api\Proposal\ProposalController@changeProposalStatus'); // this route has very many permissions check, stored to the controller
                 Route::post('/change-deadline', 'Api\Proposal\ProposalController@changeProposalDeadline');
-                Route::resource('argument', 'Api\Proposal\NotAllowedArgumentController');
-                Route::get('/argument/find/{proposal_id}', 'Api\Proposal\NotAllowedArgumentController@find');
+                // Route::resource('argument', 'Api\Proposal\NotAllowedArgumentController');
+                // Route::get('/argument/find/{proposal_id}', 'Api\Proposal\NotAllowedArgumentController@find');
                 Route::get('/sort/{sort_type}', 'Api\Proposal\ProposalController@sort');
             });
         });
@@ -179,12 +178,12 @@ Route::group(['prefix' => 'api'], function () {
         // ['middleware' => ['role:owner'],
         Route::group(['prefix' => 'owner', 'middleware' => 'role:owner'], function () {
             Route::group(['prefix' => 'user'], function () {
-                Route::get('data', 'Api\Owner\OwnerControlller@getUsersData');
-                Route::get('permissions', 'Api\Owner\OwnerControlller@getPermissions');
-                Route::get('user-roles/list', 'Api\Owner\UserController@getRoles');
-                Route::post('grant-permission', 'Api\Owner\OwnerControlller@grantPermission');
-                Route::post('revoke-access', 'Api\Owner\OwnerControlller@revokeAccess');
-                Route::post('change-password', 'Api\Owner\OwnerControlller@setuserPassword');
+                Route::get('data', 'Api\Owner\OwnerController@getUsersData');
+                Route::get('permissions', 'Api\Owner\OwnerController@getPermissions');
+                // Route::get('user-roles/list', 'Api\Owner\UserController@getRoles');
+                Route::post('grant-permission', 'Api\Owner\OwnerController@grantPermission');
+                Route::post('revoke-access', 'Api\Owner\OwnerController@revokeAccess');
+                Route::post('change-password', 'Api\Owner\OwnerController@setuserPassword');
             });
 
             // taxes
