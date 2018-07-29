@@ -126,4 +126,21 @@ class WatchController extends Controller
 
         return response()->json($watches, 200);
     }
+
+    /**
+     * @api {POST} /api/manufactory/watch/end EndWatch
+     * @apiVersion 0.0.1
+     * @apiGroup Manufactory
+     * @apiRequestExample JSON:
+     *     {
+     *         "watch_id": 1,
+     *     }
+     */
+    public function endWatch(Request $request) {
+        // 1. Get watch
+        // 2. Calculate watchers profit
+        // 3. Write watch profit payment end
+        // 5. Trigger push event
+        // 4. Return watch object
+    }
 }
