@@ -173,9 +173,10 @@ class WatchController extends Controller
         $watch_end_payment = $this->calculateWatchFinaces($watch->montly_payment, $watch->created_at, $watch->payment, $watch->id);
         // 3. Write watch profit payment end
         $watch->watch_end_payment = $watch_end_payment;
+        $watch->end_date = 
         $watch->save();
         // 5. Trigger push event
-        $this->pusher->trigger('watch', 'wtch.closed', ['message' => 'watch is closed']);
+        $this->pusher->trigger('watch', 'watch.closed', ['message' => 'watch is closed']);
         // 4. Return watch object
         return response()->json($watch, 200);
     }
