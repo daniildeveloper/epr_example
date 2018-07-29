@@ -7,9 +7,28 @@ use App\Models\Manufactory\Watch;
 use App\User;
 use Illuminate\Http\Request;
 use JWTAuth;
+use Pusher\Pusher;
 
 class WatchController extends Controller
 {
+    /**
+     * Pusher object
+     * @var Pusher\Pusher
+     */
+    private $pusher;
+
+    public function __construct() {
+        $options = array(
+            'cluster'   => env('PUSHER_APP_CLUSTER'),
+            'encrypted' => true,
+        );
+        $this->pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            $options
+        );
+    }
     /**
      * @api {GET} /api/manufactory/watch/watchers GetManufactoryWatchers
      * @apiGroup Manufactory
@@ -91,7 +110,7 @@ class WatchController extends Controller
         return response()->json($t, 200);
     }
 
-    private function calculateWatchFinaces($montly_payment, $created_at, $payment)
+    private function calculateWatchFinaces($montly_payment, $created_at, $payment, $watch_id)
     {
         $created_date = Carbon::parse($created_at);
         $now          = Carbon::now();
@@ -99,6 +118,17 @@ class WatchController extends Controller
         $worked_days = $created_date->diffInDays($now);
 
         $payment = $worked_days * ($montly_payment / 30);
+
+        // get all watch payments
+        $payments = WatchMoneyTransaction::where('watch_id', $watch_id)->get();
+        // add or decrease watch payments
+        foreach ($payments as $p) {
+            if ($p->refill === 1) {
+                $payment += (int) $p->sum;
+            } elseif ($p->refill === 0) {
+                $payment -= (int) $p->sum;
+            }
+        }
 
         return $payment;
     }
@@ -138,9 +168,15 @@ class WatchController extends Controller
      */
     public function endWatch(Request $request) {
         // 1. Get watch
+        $watch = Watch::findOrFail($request->watch_id);
         // 2. Calculate watchers profit
+        $watch_end_payment = $this->calculateWatchFinaces($watch->montly_payment, $watch->created_at, $watch->payment, $watch->id);
         // 3. Write watch profit payment end
+        $watch->watch_end_payment = $watch_end_payment;
+        $watch->save();
         // 5. Trigger push event
+        $this->pusher->trigger('watch', 'wtch.closed', ['message' => 'watch is closed']);
         // 4. Return watch object
+        return response()->json($watch, 200);
     }
 }
