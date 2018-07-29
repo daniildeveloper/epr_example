@@ -10,11 +10,14 @@
           item-text="name"
           item-value="id"
           required
+          :error="typeof validationErr != 'undefined' && validationErr != null && validationErr.watcher_id && validationErr.watcher_id.length > 0"
+          :error-messages="validationErr != null && typeof validationErr.watcher_id != 'undefined' ? validationErr.watcher_id : ''"
         ></v-select>
         <v-text-field
           label="Плата за 30 дней работы"
           v-model="watch.monthly_payment"
-          :rues="nameRules"
+          :error="validationErr != null && validationErr.monthly_payment && validationErr.monthly_payment.length > 0"
+          :error-messages="validationErr != null && typeof validationErr.monthly_payment != 'undefined'  ? validationErr.monthly_payment : ''"
           required
         ></v-text-field>
         <submit-button :form="watch" label="Начать вахту"></submit-button>
@@ -33,6 +36,7 @@ export default {
 
   props: [
     'watchers',
+    'validationErr',
   ],
 
   data () {
@@ -51,7 +55,7 @@ export default {
       console.log(this.watch);
 
       this.$emit('new-watch-created', {
-        watcher_id: this.watch.watcher.id,
+        watcher_id: this.watch.watcher,
         monthly_payment: this.watch.monthly_payment,
       });
     }

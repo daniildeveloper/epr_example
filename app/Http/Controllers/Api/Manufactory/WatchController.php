@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Api\Manufactory;
 use App\Http\Controllers\Controller;
 use App\Models\Manufactory\Watch;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use JWTAuth;
 use Pusher\Pusher;
-use Carbon\Carbon;
+use Validator;
+use Log;
 
 class WatchController extends Controller
 {
@@ -18,7 +20,8 @@ class WatchController extends Controller
      */
     private $pusher;
 
-    public function __construct() {
+    public function __construct()
+    {
         $options = array(
             'cluster'   => env('PUSHER_APP_CLUSTER'),
             'encrypted' => true,
@@ -64,8 +67,8 @@ class WatchController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'watcher_id' => 'required|min:1',
-            'monthly_payment' => 'required|min:1'
+            'watcher_id'      => 'required|min:1',
+            'monthly_payment' => 'required|min:1',
         ];
         $input = $request->all();
 
@@ -77,9 +80,9 @@ class WatchController extends Controller
             return response()->json(['message' => 'Заполните все поля', 'errors' => $validator->errors(), 'status' => 'validator_errors'], 200);
         }
 
-        $watch                 = new Watch();
-        $watch->watcher_id     = $request->watcher_id;
-        $watch->begin_date     = Carbon::now()->format('Y-m-d');
+        $watch                  = new Watch();
+        $watch->watcher_id      = $request->watcher_id;
+        $watch->begin_date      = Carbon::now()->format('Y-m-d');
         $watch->monthly_payment = $request->monthly_payment;
         $watch->save();
 
@@ -174,14 +177,15 @@ class WatchController extends Controller
      *         "watch_id": 1,
      *     }
      */
-    public function endWatch(Request $request) {
+    public function endWatch(Request $request)
+    {
         // 1. Get watch
         $watch = Watch::findOrFail($request->watch_id);
         // 2. Calculate watchers profit
         $watch_end_payment = $this->calculateWatchFinaces($watch->montly_payment, $watch->created_at, $watch->payment, $watch->id);
         // 3. Write watch profit payment end
         $watch->watch_end_payment = $watch_end_payment;
-        $watch->end_date = Carbon::now()->format('Y-m-d');
+        $watch->end_date          = Carbon::now()->format('Y-m-d');
         $watch->save();
         // 5. Trigger push event
         $this->pusher->trigger('watch', 'watch.closed', ['message' => 'watch is closed']);

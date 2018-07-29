@@ -22,7 +22,7 @@
                   <watch-dialog
                     :watchers="watchers"
                     @new-watch-created="createNewWatch"
-                    :validationErrors="validationErr"
+                    :validationErr="validationErr"
                   />
                 </v-card-text>
               <v-card-actions>
@@ -161,6 +161,7 @@ export default {
       this.$store.dispatch('setLoading', {
         loading: true
       });
+      console.log('proposal_data', proposal_data);
 
       axios.post('/api/manufactory/watch', proposal_data)
         .then(response => {
