@@ -115,12 +115,15 @@ class WatchController extends Controller
         $watches = Watch::where('watcher_id', $user->id)->limit(20)->with('watcher', 'watch_money_transactions')->get();
     }
 
-    public function getOpenWatches(Request $request) {
+    public function getOpenWatches(Request $request)
+    {
         $watcher_id = $request->watcher_id;
 
         $watches = Watch::where(function ($query) use ($watcher_id) {
             $query->where('watcher_id', $watcher_id)
-            ->where();
+                ->where('');
         })->get();
+
+        return response()->json($watches, 200);
     }
 }
