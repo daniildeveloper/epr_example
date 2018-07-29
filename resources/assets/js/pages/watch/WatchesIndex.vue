@@ -80,18 +80,6 @@
                         required
                       ></v-text-field>
 
-                      <v-text-field
-                        label="Стоимость"
-                        v-model="updateForm.price"
-                        required
-                      ></v-text-field>
-
-                      <v-text-field
-                        label="Минимум на складе"
-                        v-model="updateForm.minimal_in_stock"
-                        required
-                      ></v-text-field>
-
                       <v-card-text>
                         <submit-button :block="true" :form="updateForm" label="Обновить"></submit-button>
                       </v-card-text>

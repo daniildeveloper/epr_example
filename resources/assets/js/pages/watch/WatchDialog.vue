@@ -1,8 +1,13 @@
 <template>
     <form @submit.prevent="save">
-      <v-card-title primary-title>
-        <h4 class="headline mb-0">Новая вахта</h4>
-      </v-card-title>
+      <v-card-text>
+        <v-text-field
+          label="Плата за 30 дней работы"
+          v-model="watch.montly_payment"
+          :rues="nameRules"
+          required
+        ></v-text-field>
+      </v-card-text>
 
       <v-card-text>
         <submit-button :block="true" :form="watchForm" label="Обновить"></submit-button>
@@ -13,6 +18,7 @@
 
 <script>
 import Form from 'vform';
+import axios from 'axios';
 
 export default {
 
@@ -21,8 +27,16 @@ export default {
   data () {
     return {
         watch: new Form({
-            
-        })
+            montly_payment: 0,
+        }),
+    }
+  },
+
+  mounted() {},
+
+  methods: {
+    getData() {
+      axios.get('/')
     }
   }
 }
