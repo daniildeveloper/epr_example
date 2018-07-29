@@ -36,14 +36,7 @@ class WatchController extends Controller
      */
     public function getWatchers(Request $request)
     {
-        $users    = User::all();
-        $watchers = []; // all watchers
-
-        foreach ($users as $user) {
-            if ($user->hasRole('worker')) {
-                $watchers[] = $user;
-            }
-        }
+        $watchers = User::role('worker')->get();
 
         return response()->json($watchers, 200);
     }

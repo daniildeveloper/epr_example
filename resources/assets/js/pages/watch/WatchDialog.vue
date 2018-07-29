@@ -1,6 +1,16 @@
 <template>
     <form @submit.prevent="save">
       <v-card-text>
+        <v-select
+          autocomplete
+          label="Выбор рабочего"
+          v-model="watch.watcher"
+          placeholder="Выбрать рабочего"
+          :items="watchers"
+          item-text="name"
+          item-value="id"
+          required
+        ></v-select>
         <v-text-field
           label="Плата за 30 дней работы"
           v-model="watch.montly_payment"
@@ -24,10 +34,15 @@ export default {
 
   name: 'WatchDialog',
 
+  props: [
+    'watchers',
+  ],
+
   data () {
     return {
         watch: new Form({
             montly_payment: 0,
+            watcher: null,
         }),
     }
   },
@@ -35,8 +50,10 @@ export default {
   mounted() {},
 
   methods: {
-    getData() {
-      axios.get('/')
+    save() {
+      console.log(this.watch);
+
+      this.$emit('new-watch-created');
     }
   }
 }

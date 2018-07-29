@@ -19,7 +19,9 @@
                   </v-menu>
                 </v-card-title>
                 <v-card-text>
-                  <watch-dialog/>
+                  <watch-dialog
+                    :watchers="watchers"
+                  />
                 </v-card-text>
               <v-card-actions>
                 <v-btn color="primary" flat @click.stop="newWatchDialog=false">Закрыть</v-btn>
@@ -151,6 +153,11 @@ export default {
         })
     },
 
+  },
+
+  mounted() {
+    this.getData();
+    this.getWatchers();
   }
 }
 </script>

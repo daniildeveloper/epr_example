@@ -1,8 +1,8 @@
 <?php
 
 use App\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -36,6 +36,11 @@ class UsersTableSeeder extends Seeder
                 'name'     => 'Продавец',
                 'email'    => 'sale@trigorg.ru',
                 'password' => Hash::make('travertin'),
+            ],
+            [
+                'name'     => 'Рабочий',
+                'email'    => 'worker@trigorg.ru',
+                'password' => Hash::make('1234567890'),
             ],
         ];
 
@@ -117,7 +122,8 @@ class UsersTableSeeder extends Seeder
             'hide_wares',
             'show_stock_info',
             'end_accounting_period',
-            'manufactory'
+            'manufactory',
+            'watch_managment'
         ]);
 
         $saleDirector = Role::where('name', 'directorSale')->first();
@@ -135,23 +141,25 @@ class UsersTableSeeder extends Seeder
             'make_inventory',
             'unallow_proposals',
             'show_stock_info',
-            'manufactory'
+            'manufactory',
+            'watch_managment'
         ]);
 
         User::where('email', 'saledirector@trigorg.ru')->first()->assignRole('directorSale');
         User::where('email', 'sale@trigorg.ru')->first()->assignRole('saler');
+        User::where('email', 'worker@trigorg.ru')->first()->assignRole('worker');
 
-        $pwd = bcrypt('Proizvodstvo');
-        $user = new User();
-        $user->name = 'Taurus';
-        $user->email = 'integroat@yandex.ru';
+        $pwd            = bcrypt('Proizvodstvo');
+        $user           = new User();
+        $user->name     = 'Taurus';
+        $user->email    = 'integroat@yandex.ru';
         $user->password = $pwd;
         $user->save();
         $user->assignRole('owner');
 
         $permissions = [
             ['name' => 'change_wares_order', 'description' => 'Менять порядок выдачи товаров'],
-            ['name' => 'watch_edit', 'description' => 'Управлять сменами рабочих цеха']
+            ['name' => 'watch_edit', 'description' => 'Управлять сменами рабочих цеха'],
         ];
 
         foreach ($permissions as $p) {
@@ -165,6 +173,5 @@ class UsersTableSeeder extends Seeder
         $owner = Role::where('name', 'owner')->first();
         $owner->givePermissionTo('change_wares_order');
     }
-
 
 }
