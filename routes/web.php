@@ -57,6 +57,7 @@ Route::group(['prefix' => 'api'], function () {
                 Route::get('/watchers', 'Api\Manufactory\WatchController@getWatchers');
                 Route::post('/watcher-watches/{watcher_id}', 'Api\Manufactory\WatchController@getWatchesByWatcher');
                 Route::post('/', 'Api\Manufactory\WatchController@store');
+                Route::post('/end', 'Api\Manufactory\WatchController@endWatch');
 
                 // money
                 Route::post('add-money', 'Api\Manufactory\WatchController@addMoney');
