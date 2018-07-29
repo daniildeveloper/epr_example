@@ -53,9 +53,12 @@
         >
           <template slot="items" slot-scope="props">
             <tr @click="selectRow(props.item, props)">
-              <td >{{ props.item.name }}</td>
-              <td class="text-xs-right">{{ props.item.price }}</td>
-              <td class="text-xs-right">{{ props.item.minimal_in_stock }}</td>
+              <td>{{props.item.id}}</td>
+              <td>{{ props.item.watcher.name }}</td>
+              <td>{{ props.item.begin_date }}</td>
+              <td>{{ props.item.end_date ? props.item.end_date : '' }}</td>
+              <td>{{props.item.montly_payment}}</td>
+              <td>{{props.item.watch_end_payment ? props.item.watch_end_payment : '' }}</td>
             </tr>
           </template>
           <template slot="expand" slot-scope="props" >
