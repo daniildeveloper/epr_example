@@ -362,13 +362,15 @@ class PurseController extends Controller
 
         // close all unclosed proposals
         foreach ($unclosedProposalsIDsArray as $proposalID) {
+            // proposals total payment
+            $proposalTotalPayment = 0;
             $proposal                           = Proposal::with('wares', 'wares.ware.framework', 'wares.ware.packaging', 'wares.ware.sticker')->find($proposalID);
             $proposal->accounting_period_end_id = $accounting->id;
             $proposal->closed                   = true;
-            $proposal->save();
 
             foreach ($proposal->wares as $ware) {
-                $proposalsTotal += $ware->price_per_count * $ware->count;
+                $proposalTotalPayment += $ware->price_per_count * $ware->count;
+                $proposalsTotal += $proposalTotalPayment;
 
                 // calculate framework cost
                 $rest_framework_price = $ware->ware->framework->price * $ware->count;
@@ -384,6 +386,12 @@ class PurseController extends Controller
                 $sticker_price = $ware->ware->sticker->price * $ware->count;
                 $accounting_period_stickers_total += $sticker_price;
             }
+
+            // if we have taxes to pay, then pay taxes
+            if ($proposal->is_with_docs === 1) {
+                $proposalsTotal += ($proposalTotalPayment * (int) $proposal->tax) / 100;
+            }
+            $proposal->save();
         }
 
         $accountingMainTransaction                = new MoneyTransaction();
