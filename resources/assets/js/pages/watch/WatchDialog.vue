@@ -13,14 +13,11 @@
         ></v-select>
         <v-text-field
           label="Плата за 30 дней работы"
-          v-model="watch.montly_payment"
+          v-model="watch.monthly_payment"
           :rues="nameRules"
           required
         ></v-text-field>
-      </v-card-text>
-
-      <v-card-text>
-        <submit-button :block="true" :form="watchForm" label="Обновить"></submit-button>
+        <submit-button :form="watch" label="Начать вахту"></submit-button>
       </v-card-text>
 
     </form>
@@ -41,7 +38,7 @@ export default {
   data () {
     return {
         watch: new Form({
-            montly_payment: 0,
+            monthly_payment: 0,
             watcher: null,
         }),
     }
@@ -53,7 +50,10 @@ export default {
     save() {
       console.log(this.watch);
 
-      this.$emit('new-watch-created');
+      this.$emit('new-watch-created', {
+        watcher_id: this.watch.watcher.id,
+        monthly_payment: this.watch.monthly_payment,
+      });
     }
   }
 }

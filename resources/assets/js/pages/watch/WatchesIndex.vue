@@ -21,6 +21,8 @@
                 <v-card-text>
                   <watch-dialog
                     :watchers="watchers"
+                    @new-watch-created="createNewWatch"
+                    :validationErrors="validationErr"
                   />
                 </v-card-text>
               <v-card-actions>
@@ -135,6 +137,8 @@ export default {
 
         watchers: [],
         watcher: null,
+
+        validationErr: null,
     }
   },
 
@@ -152,6 +156,52 @@ export default {
           this.watchers = response.data;
         })
     },
+
+    createNewWatch(proposal_data) {
+      this.$store.dispatch('setLoading', {
+        loading: true
+      });
+
+      axios.post('/api/manufactory/watch', proposal_data)
+        .then(response => {
+          this.$store.dispatch('setLoading', {
+            loading: false
+          });
+
+          // check for validation errors
+          if (response.data.status != 'validator_errors') {
+            this.newWatchDialog = false;
+            this.$store.dispatch('responseMessage', {
+              modal: false,
+              text: 'Новая вахта начата',
+              type: 'success'
+            })
+            this.clear();
+          } else {
+            this.$store.dispatch('responseMessage', {
+              modal: false,
+              text: 'при создании новой вахты произошла ошибка',
+              modal: 'error',
+            });
+            // update errors
+            this.validationErr = response.data.errors;
+          }
+        })
+        .catch(err => {
+          this.$store.dispatch('setLoading', {
+            loading: false
+          });
+          this.$store.dispatch('responseMessage', {
+            modal: false,
+            text: 'при создании новой вахты произошла ошибка',
+            type: 'error'
+          })
+        })
+    },
+
+    clear() {
+      this.validationErr = null;
+    }
 
   },
 

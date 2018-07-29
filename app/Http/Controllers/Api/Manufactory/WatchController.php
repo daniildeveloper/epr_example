@@ -8,6 +8,7 @@ use App\User;
 use Illuminate\Http\Request;
 use JWTAuth;
 use Pusher\Pusher;
+use Carbon\Carbon;
 
 class WatchController extends Controller
 {
@@ -62,10 +63,24 @@ class WatchController extends Controller
      */
     public function store(Request $request)
     {
+        $rules = [
+            'watcher_id' => 'required|min:1',
+            'monthly_payment' => 'required|min:1'
+        ];
+        $input = $request->all();
+
+        // validate data
+        $validator = Validator::make($input, $rules);
+
+        if ($validator->fails()) {
+            Log::info($validator->errors()->all());
+            return response()->json(['message' => 'Заполните все поля', 'errors' => $validator->errors(), 'status' => 'validator_errors'], 200);
+        }
+
         $watch                 = new Watch();
         $watch->watcher_id     = $request->watcher_id;
         $watch->begin_date     = Carbon::now()->format('Y-m-d');
-        $watch->montly_payment = $request->montly_payment;
+        $watch->monthly_payment = $request->monthly_payment;
         $watch->save();
 
         return response()->json($watch, 200);
