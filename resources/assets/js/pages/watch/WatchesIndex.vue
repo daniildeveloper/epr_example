@@ -68,7 +68,36 @@
           <template slot="expand" slot-scope="props" >
             <v-card flat>
               <v-card-text>
-                
+                <headline>
+                  {{ props.item.watcher.name }}, с {{ props.item.begin_date }} по {{ props.item.end_date ? props.item.end_date : 'настоящее время' }}
+                </headline>
+                <v-layout row wrap>
+
+                  <!-- add money dialog -->
+                  <v-flex md2>
+                  </v-flex>
+                  <!-- end add money dialog -->
+
+                  <!-- minus money dialog -->
+                  <v-flex md2>
+                  </v-flex>
+                  <!-- end minus money dialog -->
+
+                  <!-- end watch  dialog -->
+                  <v-flex md2>
+                  </v-flex>
+                  <!-- end end watch dialog -->
+                </v-layout>
+        
+                <!-- all watch payments -->
+                <v-layout row wrap>
+                  <ul v-if="props.item.watch_money_transactions.length > 0">
+                    <li v-for="t in props.item.watch_money_transactions">
+                      {{t.refill === 1 ? 'Пополнение' : 'Убыток'}} на {{t.sum}} от {{t.created_at}}
+                    </li>
+                  </ul>
+                </v-layout>
+                <!-- end all watch payments -->
               </v-card-text>
             </v-card>
           </template>
