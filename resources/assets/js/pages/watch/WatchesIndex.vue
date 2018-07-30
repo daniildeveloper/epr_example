@@ -56,7 +56,7 @@
           item-key="name"
         >
           <template slot="items" slot-scope="props">
-            <tr @click="selectRow(props.item, props)">
+            <tr @click="props.expanded = !props.expanded">
               <td clas="text-xs-right">{{props.item.id}}</td>
               <td clas="text-xs-right">{{ props.item.watcher.name }}</td>
               <td clas="text-xs-right">{{ props.item.begin_date }}</td>
@@ -69,12 +69,12 @@
             <v-card flat>
               <v-container grid-list-md text-xs-center>
                 <v-layout row wrap>
-                  <v-flex xs12 sm6 v-if="hasPermission('crud_nomenclatures')">
+                  <v-flex xs12 sm6>
                     <progress-bar :show="busy"></progress-bar>
                     <form @submit.prevent="update">
 
                       <v-card-title primary-title>
-                        <!-- <h4 class="headline mb-0">{{ props.item.name }} редактирование</h4> -->
+                        <h4 class="headline mb-0">{{ props.item.watcher.name }} вахта началась {{props.item.begin_date}}</h4>
                       </v-card-title>
 
                       <v-card-text>
