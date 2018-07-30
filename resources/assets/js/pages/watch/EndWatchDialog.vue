@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import xios from 'axios';
+import axios from 'axios';
 
 export default {
 
@@ -30,7 +30,7 @@ export default {
 
   data () {
     return {
-
+        dialog: false,
     }
   },
 
