@@ -193,4 +193,24 @@ class WatchController extends Controller
         // 4. Return watch object
         return response()->json($watch, 200);
     }
+
+    /**
+     * @api {POST} /api/manufactory/watch/pay PayWatchTotalPaymentToWorker
+     * @apiVersion 0.0.1
+     * @apiGroup Manufactory
+     * @apiRequestExample JSOn:
+     *     {
+     *         "watch_id": 1
+     *     }
+     */
+    public function pay(Request $request) {
+        // 1. get watch
+        $watch = Watch::findOrFail($request->watch_id);
+        // 2. save as payed
+        $watch->payed = true;
+        // 3. close watch
+        $watch->save();
+
+        return response()->json($watch, 200);
+    }
 }

@@ -52,8 +52,6 @@ export default {
 
   methods: {
     save() {
-      console.log(this.watch);
-
       this.$emit('new-watch-created', {
         watcher_id: this.watch.watcher,
         monthly_payment: this.watch.monthly_payment,

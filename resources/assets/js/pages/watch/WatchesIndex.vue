@@ -102,6 +102,15 @@
                     />
                   </v-flex>
                   <!-- end end watch dialog -->
+
+                  <!-- pay watch dialog -->
+                  <v-flex md2>
+                    <pay-watch-dialog
+                      :watch_id="props.item.id"
+                      @watch-pay="getData()"
+                    />
+                  </v-flex>
+                  <!-- pay watch dialog -->
                 </v-layout>
         
                 <!-- all watch payments -->
@@ -129,6 +138,7 @@ import WatchDialog from '~/pages/watch/WatchDialog';
 import AddMoneyDialog from '~/pages/watch/AddMoneyDialog';
 import MinusMoneyDialog from '~/pages/watch/MinusMoneyDialog';
 import EndWatchDialog from '~/pages/watch/EndWatchDialog';
+import PayWatchDialog from '~/pages/watch/PayWatchDialog';
 
 /**
  * Tabled component with watches
@@ -142,6 +152,7 @@ export default {
     AddMoneyDialog,
     MinusMoneyDialog,
     EndWatchDialog,
+    PayWatchDialog,
   },
 
   data () {

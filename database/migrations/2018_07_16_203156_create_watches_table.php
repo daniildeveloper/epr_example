@@ -20,6 +20,7 @@ class CreateWatchesTable extends Migration
             $table->integer('monthly_payment');
             $table->integer('watcher_id');
             $table->integer('watch_end_payment')->nullable();
+            $table->boolean('payed')->default(false);
             $table->timestamps();
         });
     }
