@@ -95,6 +95,11 @@
 
                   <!-- end watch  dialog -->
                   <v-flex md2>
+                    <end-watch-dialog
+                      :watcher_name="props.item.watcher.name"
+                      :watch_id="props.item.id"
+                      @watch-end="getData()"
+                    />
                   </v-flex>
                   <!-- end end watch dialog -->
                 </v-layout>
@@ -123,6 +128,7 @@ import axios from 'axios';
 import WatchDialog from '~/pages/watch/WatchDialog';
 import AddMoneyDialog from '~/pages/watch/AddMoneyDialog';
 import MinusMoneyDialog from '~/pages/watch/MinusMoneyDialog';
+import EndWatchDialog from '~/pages/watch/EndWatchDialog';
 
 /**
  * Tabled component with watches
@@ -135,6 +141,7 @@ export default {
     WatchDialog,
     AddMoneyDialog,
     MinusMoneyDialog,
+    EndWatchDialog,
   },
 
   data () {
