@@ -53,38 +53,23 @@
           :headers="headers"
           :items="items"
           hide-actions
-          item-key="name"
+          item-key="id"
         >
           <template slot="items" slot-scope="props">
             <tr @click="props.expanded = !props.expanded">
-              <td clas="text-xs-right">{{props.item.id}}</td>
-              <td clas="text-xs-right">{{ props.item.watcher.name }}</td>
-              <td clas="text-xs-right">{{ props.item.begin_date }}</td>
-              <td clas="text-xs-right">{{ props.item.end_date ? props.item.end_date : '' }}</td>
-              <td clas="text-xs-right">{{props.item.monthly_payment}}</td>
-              <td clas="text-xs-right">{{props.item.watch_end_payment ? props.item.watch_end_payment : '' }}</td>
+              <td>{{props.item.id}}</td>
+              <td>{{ props.item.watcher.name }}</td>
+              <td>{{ props.item.begin_date }}</td>
+              <td>{{ props.item.end_date ? props.item.end_date : '' }}</td>
+              <td>{{props.item.monthly_payment}}</td>
+              <td>{{props.item.watch_end_payment ? props.item.watch_end_payment : '' }}</td>
             </tr>
           </template>
           <template slot="expand" slot-scope="props" >
             <v-card flat>
-              <v-container grid-list-md text-xs-center>
-                <v-layout row wrap>
-                  <v-flex xs12 sm6>
-                    <progress-bar :show="busy"></progress-bar>
-                    <form @submit.prevent="update">
-
-                      <v-card-title primary-title>
-                        <h4 class="headline mb-0">{{ props.item.watcher.name }} вахта началась {{props.item.begin_date}}</h4>
-                      </v-card-title>
-
-                      <v-card-text>
-                        <!-- <submit-button :block="true" :form="updateForm" label="Обновить"></submit-button> -->
-                      </v-card-text>
-
-                    </form>
-                  </v-flex>
-                </v-layout>
-              </v-container>
+              <v-card-text>
+                
+              </v-card-text>
             </v-card>
           </template>
         </v-data-table>
