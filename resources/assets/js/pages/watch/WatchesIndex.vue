@@ -75,6 +75,10 @@
 
                   <!-- add money dialog -->
                   <v-flex md2>
+                    <add-money-dialog 
+                      :watcher_name="props.item.watcher.name"
+                      :watch_id="props.item.id"
+                      />
                   </v-flex>
                   <!-- end add money dialog -->
 
@@ -111,6 +115,7 @@
 import axios from 'axios';
 
 import WatchDialog from '~/pages/watch/WatchDialog';
+import AddMoneyDialog from '~/pages/watch/AddMoneyDialog';
 
 /**
  * Tabled component with watches
@@ -121,6 +126,7 @@ export default {
 
   components: {
     WatchDialog,
+    AddMoneyDialog,
   },
 
   data () {
@@ -171,7 +177,6 @@ export default {
       this.$store.dispatch('setLoading', {
         loading: true
       });
-      console.log('proposal_data', proposal_data);
 
       axios.post('/api/manufactory/watch', proposal_data)
         .then(response => {
