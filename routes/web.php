@@ -55,7 +55,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::group(['prefix' => 'manufactory'], function () {
             Route::group(['prefix' => 'watch', 'middleware' => 'permission:watch_managment'], function () {
                 Route::get('/watchers', 'Api\Manufactory\WatchController@getWatchers');
-                Route::post('/watcher-watches/{watcher_id}', 'Api\Manufactory\WatchController@getWatchesByWatcher');
+                Route::get('/watcher-watches/{watcher_id}', 'Api\Manufactory\WatchController@getWatchesByWatcher');
                 Route::post('/', 'Api\Manufactory\WatchController@store');
                 Route::post('/end', 'Api\Manufactory\WatchController@endWatch');
 

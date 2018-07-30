@@ -57,12 +57,12 @@
         >
           <template slot="items" slot-scope="props">
             <tr @click="selectRow(props.item, props)">
-              <td>{{props.item.id}}</td>
-              <td>{{ props.item.watcher.name }}</td>
-              <td>{{ props.item.begin_date }}</td>
-              <td>{{ props.item.end_date ? props.item.end_date : '' }}</td>
-              <td>{{props.item.montly_payment}}</td>
-              <td>{{props.item.watch_end_payment ? props.item.watch_end_payment : '' }}</td>
+              <td clas="text-xs-right">{{props.item.id}}</td>
+              <td clas="text-xs-right">{{ props.item.watcher.name }}</td>
+              <td clas="text-xs-right">{{ props.item.begin_date }}</td>
+              <td clas="text-xs-right">{{ props.item.end_date ? props.item.end_date : '' }}</td>
+              <td clas="text-xs-right">{{props.item.monthly_payment}}</td>
+              <td clas="text-xs-right">{{props.item.watch_end_payment ? props.item.watch_end_payment : '' }}</td>
             </tr>
           </template>
           <template slot="expand" slot-scope="props" >
@@ -119,11 +119,11 @@ export default {
             align: 'left',
             value: 'id'
           },
-          { text: 'Сотрудник', value: '' },
-          { text: 'Начало', value: '' },
-          { text: 'Конец', value: '' },
-          { text: 'Плата за 30 дней', value: '' },
-          { text: 'Плата за вахту', value: '' },
+          { text: 'Сотрудник',align: 'left', value: '' },
+          { text: 'Начало',align: 'left', value: '' },
+          { text: 'Конец',align: 'left', value: '' },
+          { text: 'Плата за 30 дней',align: 'left', value: '' },
+          { text: 'Плата за вахту',align: 'left', value: '' },
         ],
         busy: false,
         items: [],
@@ -137,9 +137,12 @@ export default {
 
   methods: {
     getData() {
-        axios.get('/api/watch')
+        axios.get('/api/manufactory/watch/watcher-watches/' + this.watcher)
             .then(response => {
                 this.items = response.data;
+                this.$store.dispatch('setLoading', {
+                  loading: false
+                });
             })
     },
 
@@ -200,8 +203,17 @@ export default {
   },
 
   mounted() {
-    this.getData();
+    // this.getData();
     this.getWatchers();
+  },
+
+  watch: {
+    watcher: function (val) {
+      this.$store.dispatch('setLoading', {
+        loading: true
+      });
+      this.getData();
+    }
   }
 }
 </script>
