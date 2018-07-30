@@ -67,8 +67,8 @@ class WatchController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'watcher_id'      => 'required|min:1',
-            'monthly_payment' => 'required|min:1',
+            'watcher_id'      => 'required|min:1|integer',
+            'monthly_payment' => 'required|min:1|integer',
         ];
         $input = $request->all();
 

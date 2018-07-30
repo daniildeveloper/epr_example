@@ -182,7 +182,7 @@ export default {
             this.$store.dispatch('responseMessage', {
               modal: false,
               text: 'при создании новой вахты произошла ошибка',
-              modal: 'error',
+              type: 'error',
             });
             // update errors
             this.validationErr = response.data.errors;
