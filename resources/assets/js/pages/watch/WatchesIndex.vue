@@ -74,18 +74,11 @@
                     <form @submit.prevent="update">
 
                       <v-card-title primary-title>
-                        <h4 class="headline mb-0">{{ props.item.name }} редактирование</h4>
+                        <!-- <h4 class="headline mb-0">{{ props.item.name }} редактирование</h4> -->
                       </v-card-title>
 
-                      <v-text-field
-                        label="Название"
-                        v-model="updateForm.name"
-                        :rues="nameRules"
-                        required
-                      ></v-text-field>
-
                       <v-card-text>
-                        <submit-button :block="true" :form="updateForm" label="Обновить"></submit-button>
+                        <!-- <submit-button :block="true" :form="updateForm" label="Обновить"></submit-button> -->
                       </v-card-text>
 
                     </form>
@@ -146,7 +139,7 @@ export default {
     getData() {
         axios.get('/api/watch')
             .then(response => {
-                this.items = response.data.data;
+                this.items = response.data;
             })
     },
 
