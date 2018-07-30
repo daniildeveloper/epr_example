@@ -1,9 +1,9 @@
 <template>
   <v-layout row justify-center>
-    <v-btn color="primary" dark @click.native.stop="dialog = true">Добавить денег</v-btn>
+    <v-btn color="primary" dark @click.native.stop="dialog = true">Убрать денег</v-btn>
     <v-dialog v-model="dialog" max-width="290">
       <v-card>
-        <v-card-title class="headline">Добавить денег за вахту {{watcher_name}}?</v-card-title>
+        <v-card-title class="headline">Убрать денег за вахту {{watcher_name}}?</v-card-title>
         <v-card-text>
             <v-text-field
               label="Сумма"
@@ -13,7 +13,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" flat="flat" @click.native="close()">Закрыть</v-btn>
-          <v-btn color="green darken-1" flat="flat" @click.native="save()">Добавить</v-btn>
+          <v-btn color="green darken-1" flat="flat" @click.native="save()">Убрать</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -25,7 +25,7 @@ import axios from 'axios';
 
 export default {
 
-  name: 'AddMoneyDialog',
+  name: 'MinusMoneyDialog',
   props: [
     'watcher_name',
     'watch_id',
@@ -44,7 +44,7 @@ export default {
         loading: true
       });
 
-      axios.post('/api/manufactory/watch/add-money', {
+      axios.post('/api/manufactory/watch/minus-money', {
         watch_id: this.watch_id,
         sum: this.sum,
       }).then(response => {
@@ -57,7 +57,6 @@ export default {
             type: 'success',
             text: 'Деньги за вахту добвлены'
         })
-
         this.$emit('new-money-transaction');
       }).catch(err => {
         this.$store.dispatch('setLoading', {

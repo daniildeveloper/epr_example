@@ -68,9 +68,9 @@
           <template slot="expand" slot-scope="props" >
             <v-card flat>
               <v-card-text>
-                <headline>
+                <div class="headline">
                   {{ props.item.watcher.name }}, с {{ props.item.begin_date }} по {{ props.item.end_date ? props.item.end_date : 'настоящее время' }}
-                </headline>
+                </div>
                 <v-layout row wrap>
 
                   <!-- add money dialog -->
@@ -78,12 +78,18 @@
                     <add-money-dialog 
                       :watcher_name="props.item.watcher.name"
                       :watch_id="props.item.id"
+                      @new-money-transaction="getData()"
                       />
                   </v-flex>
                   <!-- end add money dialog -->
 
                   <!-- minus money dialog -->
                   <v-flex md2>
+                    <minus-money-dialog 
+                      :watcher_name="props.item.watcher.name"
+                      :watch_id="props.item.id"
+                      @new-money-transaction="getData()"
+                      />
                   </v-flex>
                   <!-- end minus money dialog -->
 
@@ -116,6 +122,7 @@ import axios from 'axios';
 
 import WatchDialog from '~/pages/watch/WatchDialog';
 import AddMoneyDialog from '~/pages/watch/AddMoneyDialog';
+import MinusMoneyDialog from '~/pages/watch/MinusMoneyDialog';
 
 /**
  * Tabled component with watches
@@ -127,6 +134,7 @@ export default {
   components: {
     WatchDialog,
     AddMoneyDialog,
+    MinusMoneyDialog,
   },
 
   data () {

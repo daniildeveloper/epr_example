@@ -11,6 +11,7 @@ use JWTAuth;
 use Pusher\Pusher;
 use Validator;
 use Log;
+use App\Models\Manufactory\WatchMoneyTransaction;
 
 class WatchController extends Controller
 {
